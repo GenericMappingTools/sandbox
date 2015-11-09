@@ -4,8 +4,8 @@
 # Next we tighten the convergence limit to 1 cm and allow
 # up to 5000 iterations per intermediate grid.
 verbose=-V	# Comment this out for a quiet run
-inc=2m		# Use the ~1000 points 2m data set
-#inc=1m		# Use the ~5000 points 1m data set
+#inc=2m		# Use the ~1000 points 2m data set
+inc=1m		# Use the ~5000 points 1m data set
 ps=surf.ps	# Output PS name
 e=`gmt math -Q 34 42 ADD 2 DIV COSD =`	# Set aspect ratio at this latitude
 # Request time stamps with elapsed time in session
