@@ -69,7 +69,7 @@ SplitOff2: <<
   RuntimeDepends: ghostscript
   Shlibs: <<
     %p/lib/libgmt.5.dylib 5.0.0 %n (>= 5.2.1-1)
-    %p/lib/libpsl.5.dylib 5.0.0 %n (>= 5.2.1-1)
+    %p/lib/libpostscriptlight.5.dylib 5.0.0 %n (>= 5.2.1-1)
   <<
   DocFiles: ChangeLog LICENSE.TXT README src/README.TRIANGLE src/TRIANGLE.HOWTO
 <<
