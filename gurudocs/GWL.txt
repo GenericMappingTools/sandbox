@@ -1,0 +1,134 @@
+		GWL:	GMT Workflow Language
+
+Follow-up from EarthCube proposal: These are spontaneous ideas I had today.  No serious thinking yet but
+these notes might stimulate further discussions and refinement in case we need to resurrect the concept.
+The transformative idea is to introduce a simple GMT Workflow language that even relative novices can use
+to create advanced GMT plots using the platform (scripting language) of their choice.
+
+Examples of vocabulary: 
+
+GMT:DOMAIN	w/e/s/n, x0/x1/y0/y1[,z0/z1]
+GMT:PROJ	<One of the accepted WKT, EPSG or GMT proj strings>
+GMT:SCALE	1:250000 or 0.35c, etc
+GMT:WIDTH	20c, 6i, 1200p
+GMT:CPT		name of default color table
+GMT:FORMAT	PostScript, EPS, PDF, PNG@600, JPG@300, etc
+GMT:TAG		Name of this product
+GMT:USER	Name of user
+
+Example of specific case:
+
+GMT:TAG		euromap
+GMT:DOMAIN	left=19, right=34, bottom=22, top=69
+GMT:PROJ	EPSG=3395
+GMT:WIDTH	6i
+GMT:CPT		globe
+
+Then there would be various tools (modules) that take some parameters and have some defaults
+GMT:AVERAGE	mode=mean [runs block*]
+GMT:IMAGE	[runs grdimage]
+GMT:BASE	[runs psbasemap]
+GMT:BEGIN	mode=portrait [initializes a new plot]
+GMT:END		[finalizes a plot]
+GMT:GRID	mode=NN [run various gridders]
+etc
+
+Then, to make a single plot (workflow):
+
+cat << EOF > my_map.gwl
+GMT:COMMENT	Simple GWF code to make a map showing a colored ETOPO2 image with contours of gravity inside a mask polygon,
+GMT:COMMENT	with continents painted and outlined, a color bar added at bottom on inside, and annotated and gridlined.
+-------------Set key parameters for plot -------------
+GMT:TAG		euromap
+GMT:DOMAIN	left=33, right=45, bottom=20, top=50
+GMT:PROJ	EPSG=3395
+GMT:WIDTH	6i
+GMT:CPT		globe
+GMT:FORMAT	PNG@300
+-------------OK, time to define the plot -------------
+GMT:BEGIN	mode=portrait
+GMT:IMAGE	data=http://www.soest.hawaii.edu/pwessel/etopo2.nc
+GMT:CLIP	mask=nodata.txt mode=on
+GMT:CONTOUR	annot=20 cont=5 data=faa2.nc
+GMT:CLIP	mode=off
+GMT:COAST	land=burlywood res=full outline=0.25p
+GMT:BAR		pos=bottom-inside
+GMT:BASE	gridlines=on annotate=on sides=all-left,bottom
+GMT:END
+EOF
+
+gwl2script -Sbash my_map.gwl > my_map.bash
+
+gives
+
+#!/bin/bash
+# Produced by gwl2script -Sbash -V my_map.gwl
+# Date: ..
+
+# Simple GWF code to make a map showing a colored ETOPO2 image with contours of gravity inside a mask polygon,
+# with continents painted and outlined, a color bar added at bottom on inside, and annotated and gridlined.
+
+# Project settings
+# GMT:TAG	euromap
+# GMT:DOMAIN	left=33, right=45, bottom=20, top=50
+# GMT:PROJ	EPSG=3395
+# GMT:WIDTH	6i
+# GMT:CPT	globe
+# GMT:FORMAT	PNG@300
+gmt_region=33/45/20/50
+gmt_proj=M6i
+gmt_cpt=globe
+gmt_ps=euromap.ps
+# GMT:HEADER	mode=portrait
+gmt psxy -R$gmt_region -J$gmt_proj -P -K -T > $gmt_ps
+# GMT:IMAGE	data=etopo2.nc
+data=etopo2.nc 
+gmt grdimage -R -J -O -K $data -C$gmt_cpt >> $gmt_ps
+# GMT:CLIP	mask=nodata.txt mode=on
+data=nodata.txt 
+gmt psclip -R -J -O -K $data >> $gmt_ps
+# GMT:CONTOUR	annot=20 cont=5 data=faa2.nc
+data=faa2.nc 
+annot_int=10
+cont_int=5
+gmt grdcontour -R -J -O -K $data -A$annot_int -C$cont_int >> $gmt_ps
+# GMT:CLIP	mode=off
+gmt psclip -R -J -O -K -C >> $gmt_ps
+# GMT:BAR	pos=bottom-outside
+gmt psscale -C$gmt_cpt -R -J -O -K -DJBC+5i/0.2i+h >> $gmt_ps
+GMT:BASE	gridlines=on annotate=on sides=all-left,bottom
+gmt psbasemap -R -J -O -K -BWSne -Bag >> $gmt_ps
+GMT:END
+gmt psxy -R -J -O -T >> $gmt_ps
+gmt psconvert $gmt_ps -TG -E300 -P -Z
+
+while gwl2script -Smatlab my_map.gwl > my_map.m
+
+gives
+
+%
+% Produced by gwl2script -Sbash my_map.gwl
+% Date: ..
+
+% Simple GWF code to make a map showing a colored ETOPO2 image with contours of gravity inside a mask polygon,
+% with continents painted and outlined, a color bar added at bottom on inside, and annotated and gridlined.
+
+% Project settings
+gmt_region = '33/45/20/50';
+gmt_proj = 'M6i';
+gmt_cpt = 'globe';
+gmt_ps = 'euromap.ps';
+gmt (['psxy -R 'gmt_region ' -J ' gmt_proj ' -P -K -T > ' gmt_ps]);
+data = 'etopo2.nc';
+gmt (['grdimage -R -J -O -K ' data ' -C' gmt_cpt ' >> ' gmt_ps]);
+data = nodata.txt 
+gmt (['psclip -R -J -O -K ' data ' >> ' gmt_ps]);
+data = 'faa2.nc';
+annot_int = '10';
+cont_int = '5';
+gmt (['grdcontour -R -J -O -K ' data ' -A' annot_int ' -C' cont_int ' >> ' gmt_ps]);
+gmt (['psclip -R -J -O -K -C >> ' gmt_ps]);
+gmt (['psscale -C' gmt_cpt ' -R -J -O -K -DJBC+5i/0.2i+h >> ' gmt_ps]);
+gmt (['psbasemap -R -J -O -K -BWSne -Bag >> ' gmt_ps]);
+gmt (['psxy -R -J -O -T >> ' gmt_ps]);
+gmt_plot = gmt (['psconvert -TG -E300 -P -Z ' gmt_ps]);
