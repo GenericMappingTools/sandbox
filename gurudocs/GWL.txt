@@ -3,16 +3,17 @@
 Follow-up from EarthCube proposal: These are spontaneous ideas I had today.  No serious thinking yet but
 these notes might stimulate further discussions and refinement in case we need to resurrect the concept.
 The transformative idea is to introduce a simple GMT Workflow language that even relative novices can use
-to create advanced GMT plots using the platform (scripting language) of their choice.
+to create moderately advanced GMT plots using the platform (scripting language) of their choice.  Supported
+languages would be: bash, csh, python, MATLAB, Julia, maybe batch.
 
 Examples of vocabulary: 
 
-GMT:DOMAIN	w/e/s/n, x0/x1/y0/y1[,z0/z1]
-GMT:PROJ	<One of the accepted WKT, EPSG or GMT proj strings>
+GMT:DOMAIN	w/e/s/n, x0/x1/y0/y1[,z0/z1], g, d
+GMT:PROJ	<One of the accepted WKT, EPSG, PROJ4 or GMT proj strings>
 GMT:SCALE	1:250000 or 0.35c, etc
 GMT:WIDTH	20c, 6i, 1200p
 GMT:CPT		name of default color table
-GMT:FORMAT	PostScript, EPS, PDF, PNG@600, JPG@300, etc
+GMT:FORMAT	PostScript, EPS, PDF, PNG@600, JPG@300, etc.
 GMT:TAG		Name of this product
 GMT:USER	Name of user
 
@@ -33,7 +34,53 @@ GMT:END		[finalizes a plot]
 GMT:GRID	mode=NN [run various gridders]
 etc
 
-Then, to make a single plot (workflow):
+Our first example is a simple pscoast global map job:
+
+cat << EOF > my_map.gwl
+GMT:COMMENT	Simple GWF code to make a global Mollweide map.
+-------------Set key parameters for plot -------------
+GMT:TAG		worldmap
+GMT:DOMAIN	world
+GMT:PROJ	EPSG=54009
+GMT:WIDTH	6i
+GMT:FORMAT	PDF
+-------------OK, time to define the plot -------------
+GMT:BEGIN	mode=landscape
+GMT:COAST	land=burlywood res=full pen=0.25p
+GMT:BASE	gridlines=on annotate=on sides=all-left,bottom
+GMT:END
+EOF
+
+gwl2script -Sbash my_map.gwl > my_map.bash
+
+gives
+
+#!/bin/bash
+# Produced by gwl2script -Sbash -V my_map.gwl
+# Date: ..
+
+# Simple GWF code to make a global Mollweide pscoast map.
+
+# Project settings
+# GMT:TAG	worldmap
+# GMT:DOMAIN	world
+# GMT:PROJ	EPSG=54009
+# GMT:WIDTH	6i
+# GMT:FORMAT	PDF
+gmt_region=d
+gmt_proj=W6i
+# GMT:HEADER	mode=landscape
+gmt psxy -R$gmt_region -J$gmt_proj -K -T > $gmt_ps
+GMT:COAST	land=burlywood res=full pen=0.25p
+gmt pscoast -R -J -O -K -Gburlywood -Df -W0.25p >> $gmt_ps
+GMT:BASE	gridlines=on annotate=on sides=all-left,bottom
+gmt psbasemap -R -J -O -K -BWSne -Bag >> $gmt_ps
+GMT:END
+gmt psxy -R -J -O -T >> $gmt_ps
+gmt psconvert $gmt_ps -Tf -P -Z
+
+
+Here is a slightly more complicated workflow:
 
 cat << EOF > my_map.gwl
 GMT:COMMENT	Simple GWF code to make a map showing a colored ETOPO2 image with contours of gravity inside a mask polygon,
@@ -51,7 +98,7 @@ GMT:IMAGE	data=http://www.soest.hawaii.edu/pwessel/etopo2.nc
 GMT:CLIP	mask=nodata.txt mode=on
 GMT:CONTOUR	annot=20 cont=5 data=faa2.nc
 GMT:CLIP	mode=off
-GMT:COAST	land=burlywood res=full outline=0.25p
+GMT:COAST	land=burlywood res=full pen=0.25p
 GMT:BAR		pos=bottom-inside
 GMT:BASE	gridlines=on annotate=on sides=all-left,bottom
 GMT:END
@@ -94,6 +141,11 @@ cont_int=5
 gmt grdcontour -R -J -O -K $data -A$annot_int -C$cont_int >> $gmt_ps
 # GMT:CLIP	mode=off
 gmt psclip -R -J -O -K -C >> $gmt_ps
+GMT:COAST	land=burlywood res=full pen=0.25p
+land=burlywood;
+pen=0.25p;
+res=f;
+gmt pscoast -R -J -O -K -G$land -D$res -W$pen >> $gmt_ps
 # GMT:BAR	pos=bottom-outside
 gmt psscale -C$gmt_cpt -R -J -O -K -DJBC+5i/0.2i+h >> $gmt_ps
 GMT:BASE	gridlines=on annotate=on sides=all-left,bottom
@@ -107,7 +159,7 @@ while gwl2script -Smatlab my_map.gwl > my_map.m
 gives
 
 %
-% Produced by gwl2script -Sbash my_map.gwl
+% Produced by gwl2script -Smatlab my_map.gwl
 % Date: ..
 
 % Simple GWF code to make a map showing a colored ETOPO2 image with contours of gravity inside a mask polygon,
@@ -129,6 +181,37 @@ cont_int = '5';
 gmt (['grdcontour -R -J -O -K ' data ' -A' annot_int ' -C' cont_int ' >> ' gmt_ps]);
 gmt (['psclip -R -J -O -K -C >> ' gmt_ps]);
 gmt (['psscale -C' gmt_cpt ' -R -J -O -K -DJBC+5i/0.2i+h >> ' gmt_ps]);
+land='burlywood';
+pen='0.25p';
+res='f';
+gmt (['pscoast -G' land ' -R -J -O -K -D' res ' -W' pen ' >> ' gmt_ps]);
 gmt (['psbasemap -R -J -O -K -BWSne -Bag >> ' gmt_ps]);
 gmt (['psxy -R -J -O -T >> ' gmt_ps]);
 gmt_plot = gmt (['psconvert -TG -E300 -P -Z ' gmt_ps]);
+
+More advanced features: While we would want GWL to be simple and non-threatening it must also allow
+for some slightly more complicated things (loops?, branches?) and custom raw code.  Some possibilities:
+
+GMT:script	<actual code in specified scripting language.
+
+E.g.,
+GMT:bash	gmt blockmean -R -I1 -V /var/test/data.txt | wc -l | awk '{printf "bins_%6.6d\n", $1}'
+
+Loops.  Needs a matlabesque var=start:inc:stop setup.  Then, commands needing the loop variable should use name variable
+
+GMT:FORBEGIN	var=start:inc:stop
+GMT:LOOP:		<other GMT commands>, how to use $var ??
+	GMT:IMAGE data=myfilename.<var>.nc
+GMT:FOREND
+
+GMT:WHILEBEGIN	var=init test=[var <= 55]
+GMT:LOOP:		<other GMT commands>, how to use $var ??
+GMT:WHILEEND
+
+GMT:COUNTER	name=init	# Declares an integer counter variable
+GMT:STRING	name=init	# Declares a text variable
+GMT:INCREMENT	var=name [inc=increment]	# Adds increment [1] to name
+GMT:IFTEST	counter|string name==value or <= < >= >
+GMT:ELSE
+GMT:ENDIF
+
