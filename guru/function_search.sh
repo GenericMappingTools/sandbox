@@ -18,6 +18,7 @@ if [ ! -d src ]; then
 fi
 # Make list of reasonable C files of interest
 find src -name '*.c' | egrep -v 'gmt_url.c|gmtprogram.c|grdfilter_mt.c|kiss_fft|nrutil|cm4_functions|test|pthreads_example|s_rint|script2verbatim|segy_io|triangle.c' > c.lis
+echo "src/gmt_nc.c" > c.lis
 rm -rf log
 mkdir -p log
 while read file; do # For each C file
@@ -38,7 +39,7 @@ cat log/*.lis > all.log
 # Want to determine how many times each of the functions in all.log are called in any of the files in c.lis
 rm -f tmp
 while read function; do
-	n=`Cfind "$function \(" | wc -l`
+	n=`Cfind "$function \(|&${function};" | wc -l`
 	echo "$n	$function" >> tmp
 	printf "%-40s: %3d\n" $function $n
 done < all.log
