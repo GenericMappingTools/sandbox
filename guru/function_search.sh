@@ -17,8 +17,10 @@ if [ ! -d src ]; then
 	exit
 fi
 # Make list of reasonable C files of interest
-find src -name '*.c' | egrep -v 'gmt_url.c|gmtprogram.c|grdfilter_mt.c|kiss_fft|nrutil|cm4_functions|test|pthreads_example|s_rint|script2verbatim|segy_io|triangle.c' > c.lis
-echo "src/gmt_nc.c" > c.lis
+#find src -name 'postscript*.c' | egrep -v 'f77' > c.lis
+#find src -name 'gmt_*.c' | egrep -v 'gmt_url.c|gmt_error|_module.c' > c.lis
+find src -name '*.c' > c.lis
+#echo "src/common_string.c" > c.lis
 rm -rf log
 mkdir -p log
 while read file; do # For each C file
@@ -26,10 +28,11 @@ while read file; do # For each C file
 	# Determine all the functions in this file
 	log=log/`basename $file ".c"`.lis
 	echo "Create $log"
-	egrep '{$' $file | egrep '^bool |^int |^float |^double |^char |^uint64_t |^int64_t |^void ' | tr '(*' '  ' | awk '{if ($2 == "*") {print $3} else {print $2}}' > tmp
+	egrep '{$' $file | egrep '^FILE |^bool |^size_t |^int |^float |^double |^char |^uint64_t |^int64_t |^void ' | tr '(*' '  ' | awk '{if ($2 == "*") {print $3} else {print $2}}' > tmp
+	#egrep '{$' $file | egrep '^doublereal |^integer |^logical ' | tr '(*' '  ' | awk '{if ($2 == "*") {print $3} else {print $2}}' >> tmp
 	egrep '{$' $file | egrep '^enum ^short |^unsigned |^struct ' | tr '(*' '  ' | awk '{if ($3 == "*") {print $4} else {print $3}}' >> tmp
 	# Eliminate struct and array declarations and main functions
-	egrep -v '\[|\]|\{|\}|^main' tmp | sort -u | sed '/^\s*$/d' > $log
+	egrep -v '\[|\]|\{|\}|^main' tmp | grep -v GMT_LOCAL | sort -u | sed '/^\s*$/d' > $log
 	if [ ! -s $log ]; then
 		rm -f $log
 	fi
@@ -40,8 +43,10 @@ cat log/*.lis > all.log
 rm -f tmp
 while read function; do
 	n=`Cfind "$function \(|&${function};" | wc -l`
-	echo "$n	$function" >> tmp
-	printf "%-40s: %3d\n" $function $n
+	m=`Cfind "&$function;" | wc -l`
+	tot=`gmt math -Q $n $m ADD =`
+	echo "$tot	$function" >> tmp
+	printf "%-40s: %3d\n" $function $tot
 done < all.log
-sort -k 1 -g -r tmp > summary.lis
+sort -k 1 -g -r tmp > summary.txt
 rm -f tmp all.log c.lis
