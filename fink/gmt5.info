@@ -1,6 +1,6 @@
 Package: gmt5
 Version: 5.2.1
-Revision: 2
+Revision: 3
 Source: ftp://ftp.soest.hawaii.edu/gmt/gmt-%v-src.tar.xz
 Source-MD5: 4823ab45965a55d5d8869181ae3b0cca
 SourceDirectory: gmt-%v
@@ -10,7 +10,7 @@ Replaces: gmt
 BuildDepends: <<
   fink (>= 0.32),
   cmake,
-  netcdf-c7 (>= 4.3.3.1),
+  netcdf-c11,
   libpcre1,
   gdal2-dev,
   fftw3 (>= 3.3.3)
@@ -59,7 +59,7 @@ SplitOff2: <<
   Package: %N-shlibs
   Files: lib/*.5.*dylib lib/gmt
   Depends: <<
-    netcdf-c7-shlibs (>= 4.3.3.1),
+    netcdf-c11-shlibs,
     libpcre1-shlibs,
     gdal2-shlibs,
     fftw3-shlibs (>= 3.3.3),
