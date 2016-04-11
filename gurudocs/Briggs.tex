@@ -1,0 +1,163 @@
+%	$Id: ternary.tex 14379 2015-06-23 02:37:32Z pwessel $
+% Internal documentation for SOliving Briggs coefficients
+% Paul Wessel, April 21, 2015.
+\documentclass[12pt,letterpaper,margin=0.5in]{report}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{breqn}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{lscape}
+\textheight = 9 in
+\topmargin = -1 in
+\begin{document}
+
+\section*{BRIGGS COEFFICIENT SOLUTIONS}
+
+Testing reveals that our implementation of the off-node data constraints is incorrect
+for some quadrants.  Our implementation holds for the first quadrant but then we
+use this geometry for all quadrants by only using the absolute value of the point's
+coordinates relative to the central node.  This seems incorrect.  Here are the
+solutions obtained by symbolic Matlab:
+\subsection*{First quadrant}
+Here the point E has relative coordinates ($u_E, v_E$).  The other four points used are
+nodes on the grid and thus have relative $x$- and $y$-coordinates belonging to the set \{$-1, 0, +1$\}, depending on
+which node we consider. The four nodes used in the
+construction for quadrant 1 are numbered 1, 5, 9, 10 in the code and relative to the central (0,0) node they
+are identified as NW, W1, S1, SE. These form the first four columns in the matrix, while point E
+forms the 5th column (this format is kept for all quadrants).  Hence, the matrix equation
+for $b_k$ becomes
+\begin{equation}
+\left[ {\begin{array}{*{20}{r}}
+{ - 1}&{ - 1}&0&1&{{u_E}}\\
+1&0&{ - 1}&{ - 1}&{{v_E}}\\
+1&1&0&1&{u_E^2}\\
+{ - 1}&0&0&{ - 1}&{{u_E}{v_E}}\\
+1&0&1&1&{v_E^2}
+\end{array}} \right] \cdot \left[ {\begin{array}{*{20}{c}}
+{{b_1}}\\
+{{b_2}}\\
+{{b_3}}\\
+{{b_4}}\\
+{{b_5}}
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+0\\
+0\\
+2\\
+0\\
+2
+\end{array}} \right].
+\end{equation}
+This is identical to our published case.  Introducing $\Delta = \left (u_E + v_E + 1 \right)\left (u_E + v_E\right)$ we find
+the solution
+\begin{equation}
+\left[ {\begin{array}{*{20}{c}}
+{{b_1}}\\
+{{b_2}}\\
+{{b_3}}\\
+{{b_4}}\\
+{{b_5}}
+\end{array}} \right] = \frac{1}{\Delta }\left[ {\begin{array}{*{20}{c}}
+{u_E^2 - v_E^2 + 2{u_E}{v_E} + {u_E} - {v_E}}\\[4pt]
+{2\left( {{v_E} - {u_E} + 1} \right)\left( {{u_E} + {v_E}} \right)}\\[4pt]
+{2\left( {{u_E} - {v_E} + 1} \right)\left( {{u_E} + {v_E}} \right)}\\[4pt]
+{v_E^2 - u_E^2 + 2{u_E}{v_E} - {u_E} + {v_E}}\\[4pt]
+4
+\end{array}} \right]
+\end{equation}
+\subsection{Second quadrant}
+Here the point E has relative coordinates ($-u_E, v_E$).  The four nodes used in the
+construction for quadrant 2 are numbered 3, 6, 9, 8 in the code and relative to the central (0,0) node they
+are identified as NE, E1, S1, SW. The matrix equation for $b_k$ becomes
+\begin{equation}
+\left[ {\begin{array}{*{20}{r}}
+1&1&0&{ - 1}&{ - {u_E}}\\
+1&0&{ - 1}&{ - 1}&{{v_E}}\\
+1&1&0&1&{u_E^2}\\
+1&0&0&1&{ - {u_E}{v_E}}\\
+1&0&1&1&{v_E^2}
+\end{array}} \right] \cdot \left[ {\begin{array}{*{20}{c}}
+{{b_1}}\\
+{{b_2}}\\
+{{b_3}}\\
+{{b_4}}\\
+{{b_5}}
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+0\\
+0\\
+2\\
+0\\
+2
+\end{array}} \right].
+\end{equation}
+The solution is identical to that for quadrant 1.
+\subsection{Third quadrant}
+Here the point E has relative coordinates ($-u_E, -v_E$).  The four nodes used in the
+construction for quadrant 3 are numbered 1, 2, 6, 10 in the code and relative to the central (0,0) node they
+are identified as NW, N1, E1, SE. The matrix equation for $b_k$ becomes
+\begin{equation}
+\left[ {\begin{array}{*{20}{r}}
+{ - 1}&0&1&1&{ - {u_E}}\\
+1&1&0&{ - 1}&{ - {v_E}}\\
+1&0&1&1&{u_E^2}\\
+{ - 1}&0&0&{ - 1}&{{u_E}{v_E}}\\
+1&1&0&1&{v_E^2}
+\end{array}} \right] \cdot \left[ {\begin{array}{*{20}{c}}
+{{b_1}}\\
+{{b_2}}\\
+{{b_3}}\\
+{{b_4}}\\
+{{b_5}}
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+0\\
+0\\
+2\\
+0\\
+2
+\end{array}} \right],
+\end{equation}
+with solution
+\begin{equation}
+\left[ {\begin{array}{*{20}{c}}
+{{b_1}}\\
+{{b_2}}\\
+{{b_3}}\\
+{{b_4}}\\
+{{b_5}}
+\end{array}} \right] = \frac{1}{\Delta }\left[ {\begin{array}{*{20}{c}}
+{v_E^2 - u_E^2 + 2{u_E}{v_E} + {v_E} - {u_E}}\\[4pt]
+{2\left( {{u_E} - {v_E} + 1} \right)\left( {{u_E} + {v_E}} \right)}\\[4pt]
+{2\left( {{v_E} - {u_E} + 1} \right)\left( {{u_E} + {v_E}} \right)}\\[4pt]
+{u_E^2 - v_E^2 + 2{u_E}{v_E} - {v_E} + {u_E}}\\[4pt]
+4
+\end{array}} \right].
+\end{equation}
+Apart from $b_5$, this solution is clearly different from the first two quadrants and herein lies our problem.
+\subsection{Fourth quadrant}
+Here the point E has relative coordinates ($-u_E, -v_E$).  The four nodes used in the
+construction for quadrant 4 are numbered 3, 2, 5, 8 in the code and relative to the central (0,0) node they
+are identified as NE, N1, W1, SW. The matrix equation for $b_k$ becomes
+\begin{equation}
+\left[ {\begin{array}{*{20}{r}}
+1&0&{ - 1}&{ - 1}&{{u_E}}\\
+1&1&0&{ - 1}&{ - {v_E}}\\
+1&0&1&1&{u_E^2}\\
+1&0&0&1&{ - {u_E}{v_E}}\\
+1&1&0&1&{v_E^2}
+\end{array}} \right] \cdot \left[ {\begin{array}{*{20}{c}}
+{{b_1}}\\
+{{b_2}}\\
+{{b_3}}\\
+{{b_4}}\\
+{{b_5}}
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+0\\
+0\\
+2\\
+0\\
+2
+\end{array}} \right].
+\end{equation}
+The solution is identical to that for quadrant 3.
+Comparisons of the solution for the upper and lower halves reveal the differences are all proportional to
+($u_e - v_E$), hence there are no differences when data constraints lie along the 45-degree diagonals.
+\end{document}
