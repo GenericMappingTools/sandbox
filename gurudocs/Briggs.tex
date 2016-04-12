@@ -1,29 +1,26 @@
 %	$Id: ternary.tex 14379 2015-06-23 02:37:32Z pwessel $
 % Internal documentation for SOliving Briggs coefficients
 % Paul Wessel, April 21, 2015.
-\documentclass[12pt,letterpaper,margin=0.5in]{report}
+\documentclass[12pt,letterpaper,margin=0.5in]{article}
 \usepackage{times}
 \usepackage{graphicx}
 \usepackage{breqn}
-\usepackage[margin=0.5in]{geometry}
-\usepackage{lscape}
-\textheight = 9 in
-\topmargin = -1 in
+\usepackage[margin=1in]{geometry}
 \begin{document}
 
-\section*{BRIGGS COEFFICIENT SOLUTIONS}
+\section{BRIGGS COEFFICIENT SOLUTIONS}
 
 Testing reveals that our implementation of the off-node data constraints is incorrect
 for some quadrants.  Our implementation holds for the first quadrant but then we
 use this geometry for all quadrants by only using the absolute value of the point's
 coordinates relative to the central node.  This seems incorrect.  Here are the
-solutions obtained by symbolic Matlab:
-\subsection*{First quadrant}
+solutions obtained by symbolic Matlab [See Briggs.m script]:
+\subsection{First quadrant}
 Here the data constraint point E has relative coordinates ($u_E, v_E$).  The other four points used are
 nodes on the grid and thus have relative $x$- and $y$-coordinates belonging to the set \{$-1, 0, +1$\}, depending on
 which node we consider. The four nodes used in the
-construction for quadrant 1 are numbered 1, 5, 9, 10 in the code and relative to the central (0,0) node they
-are identified as NW, W1, S1, SE. These form the first four columns in the matrix, while point E
+construction for quadrant 1 are numbered \{1, 5, 9, 10\} in the code and relative to the central (0,0) node they
+are identified as \{NW, W1, S1, SE\}. These form the first four columns in the matrix, while point E
 forms the 5th column (this format is kept for all quadrants).  Hence, the matrix equation
 for $b_k$ becomes
 \begin{equation}
@@ -63,11 +60,12 @@ the solution
 {v_E^2 - u_E^2 + 2{u_E}{v_E} - {u_E} + {v_E}}\\[4pt]
 4
 \end{array}} \right]
+\label{eq:upper}
 \end{equation}
 \subsection{Second quadrant}
 Here the point E has relative coordinates ($-u_E, v_E$).  The four nodes used in the
-construction for quadrant 2 are numbered 3, 6, 9, 8 in the code and relative to the central (0,0) node they
-are identified as NE, E1, S1, SW. The matrix equation for $b_k$ becomes
+construction for quadrant 2 are numbered \{3, 6, 9, 8\} in the code and relative to the central (0,0) node they
+are identified as \{NE, E1, S1, SW\}. The matrix equation for $b_k$ becomes
 \begin{equation}
 \left[ {\begin{array}{*{20}{r}}
 1&1&0&{ - 1}&{ - {u_E}}\\
@@ -88,13 +86,12 @@ are identified as NE, E1, S1, SW. The matrix equation for $b_k$ becomes
 0\\
 2
 \end{array}} \right].
-\label{eq:upper}
 \end{equation}
 The solution is identical to that for quadrant 1.
 \subsection{Third quadrant}
 Here the point E has relative coordinates ($-u_E, -v_E$).  The four nodes used in the
-construction for quadrant 3 are numbered 1, 2, 6, 10 in the code and relative to the central (0,0) node they
-are identified as NW, N1, E1, SE. The matrix equation for $b_k$ becomes
+construction for quadrant 3 are numbered \{1, 2, 6, 10\} in the code and relative to the central (0,0) node they
+are identified as \{NW, N1, E1, SE\}. The matrix equation for $b_k$ becomes
 \begin{equation}
 \left[ {\begin{array}{*{20}{r}}
 { - 1}&0&1&1&{ - {u_E}}\\
@@ -136,8 +133,8 @@ with solution
 Apart from $b_5$, this solution is clearly different from the first two quadrants and herein lies our problem.
 \subsection{Fourth quadrant}
 Here the point E has relative coordinates ($-u_E, -v_E$).  The four nodes used in the
-construction for quadrant 4 are numbered 3, 2, 5, 8 in the code and relative to the central (0,0) node they
-are identified as NE, N1, W1, SW. The matrix equation for $b_k$ becomes
+construction for quadrant 4 are numbered \{3, 2, 5, 8\} in the code and relative to the central (0,0) node they
+are identified as \{NE, N1, W1, SW\}. The matrix equation for $b_k$ becomes
 \begin{equation}
 \left[ {\begin{array}{*{20}{r}}
 1&0&{ - 1}&{ - 1}&{{u_E}}\\
