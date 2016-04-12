@@ -77,9 +77,9 @@ bnew = [(alpha^2*(uE^2 + 2*uE*vE + uE) - (vE^2 + vE))/D
 b5 = (2*(alpha^2 + 1))/((uE+vE)*(1+uE+vE));
 b4 = 1 - 0.5*b5*(uE+uE^2);
 b3 = vE*(1+uE)*b5-2*b4;
-b2 = b3 - (uE^2-vE^2)*b5;
+b2 = b3 - (uE^2-vE^2)*b5; % <-- this seems correct
 %b2 = vE*(1+uE)*b5-b3; <-- This is original paper eq but this must be wrong
-b1 = uE*b5 + b4 - b2; % <-- this seems correct
+b1 = uE*b5 + b4 - b2;
 bpaper = [b1; b2; b3; b4; b5]
 
 % Coded up from surface.c matches bnew when alpha == 1
