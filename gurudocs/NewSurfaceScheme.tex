@@ -1,0 +1,115 @@
+%	$Id: ternary.tex 14379 2015-06-23 02:37:32Z pwessel $
+% Internal documentation for SOliving Briggs coefficients
+% Paul Wessel, April 21, 2015.
+%\documentclass[12pt,letterpaper,margin=0.5in]{report}
+\documentclass[12pt,letterpaper]{article}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{amsmath}
+%\usepackage[margin=0.5in]{geometry}
+%\usepackage{lscape}
+%\textheight = 9 in
+%\topmargin = -1 in
+\begin{document}
+
+\section{Determine $C_{00}$ using interpolating biquadratic}
+Briggs used a 2-D Taylor expansion from the center node to an off-node data constraint
+to include such data constraints in a minimum curvature spline.
+As an alternative approach to incorporating such off-node data constraints in surface,
+consider fitting the biquadratic model
+\begin{equation}
+	z(x,y) = c_1 + c_2 x + c_3 y + c_4 xy + c_5 x^2 + c_6 y^2 + c_7 x^2y + c_8 y^2x + c_9 x^2y^2
+	\label{eq:biquadratic}
+\end{equation}
+to the nearest 8 nodes plus a single data constraint in the vicinity of ($0,0$).  Using the nodes numbered 1, 2, 3, 5, 6, 8, 9, 10
+(i.e., NW, N1, NE, W1, E1, SW, S1, SE relative to the center node) we obtain the following matrix equation for the 9 unknown coefficients $c_k$ of the exact interpolation:
+\begin{equation}
+\left[ {\begin{array}{*{20}{c}}
+1&{ - 1}&1&{ - 1}&1&1&1&{ - 1}&1\\
+1&0&1&0&0&1&0&0&0\\
+1&1&1&1&1&1&1&1&1\\
+1&{ - 1}&0&0&1&0&0&0&0\\
+1&1&0&0&1&0&0&0&0\\
+1&{ - 1}&{ - 1}&1&1&1&{ - 1}&{ - 1}&1\\
+1&0&{ - 1}&0&0&1&0&0&0\\
+1&1&{ - 1}&{ - 1}&1&1&{ - 1}&1&1\\
+1&x&y&{xy}&{{x^2}}&{{y^2}}&{{x^2}y}&{{y^2}x}&{{x^2}{y^2}}
+\end{array}} \right] \cdot \left[ {\begin{array}{*{20}{c}}
+{{c_1}}\\
+{{c_2}}\\
+{{c_3}}\\
+{{c_4}}\\
+{{c_5}}\\
+{{c_6}}\\
+{{c_7}}\\
+{{c_8}}\\
+{{c_9}}
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+{{z_1}}\\
+{{z_2}}\\
+{{z_3}}\\
+{{z_4}}\\
+{{z_5}}\\
+{{z_6}}\\
+{{z_7}}\\
+{{z_8}}\\
+z
+\end{array}} \right].
+\end{equation}
+Here, $z_1$ -- $z_8$ are the node values for the selected 8 grid nodes above; these all have $x$ and $y$ coordinates
+in the \{$-1, 0, +1$\} set.  The single off-node data constraint is given by ($x,y,u$).
+We only need (\ref{eq:biquadratic}) to evaluate $C_{00} = \nabla^2 z \rvert _{0, 0} = c_5 + c_6$ as all other terms will be zero.
+This expression relates the curvature of the surface at the center node to our off-node data point.  Letting MATLAB do the algebra,
+we obtain
+\begin{equation}
+C_{00} = \frac{D}{2(x^2-1)(y^2-1)}
+\label{eq:biquad}
+\end{equation}
+with
+\begin{equation}
+\begin{split}
+D = z_2 + z_4 + z_5 + z_7 - 4u - 2x z_4 + 2 x z_5 + 2 y z_2 - 2 y z_7 - x^2 z_2   \\
+    + x^2 z_4 + x^2 z_5 - x^2 z_7 + y^2 z_2 - y^2 z_4 - y^2 z_5 + y^2 z_7 - x y^2 z_1    \\
+    + x^2 y z_1 - 2 x^2 y z_2 + x y^2 z_3 + x^2 y z_3 + 2 x y^2 z_4 - 2 x y^2 z_5 - x y^2 z_6  \\
+    - x^2 y z_6 + 2 x^2 y z_7 + x y^2 z_8 - x^2 y z_8 + x^2 y^2 z_1 - x^2 y^2 z_2 + x^2 y^2 z_3   \\
+    - x^2 y^2 z_4 - x^2 y^2 z_5+ x^2 y^2 z_6 - x^2 y^2 z_7 + x^2 y^2 z_8 - x y z_1 + x y z_3 \\
+    + x y z_6 - x y z_8.
+\end{split}
+\end{equation}
+which we can reorganize to
+\begin{equation}
+\begin{split}
+D = (z_2 + z_4 + z_5 + z_7 - 4u)   \\
+	+ 2x (z_5 - z_4) + 2y (z_2 - z_7) + x y (z_3 + z_6 - z_1 - z_8) \\
+	- x^2 (z_4 + z_5 - z_2 - z_7) + y^2 (z_2 - z_4 - z_5 + z_7)    \\
+	+ x^2 y (z_1 - 2 z_2 + z_3 - z_6 + 2 z_7 - z_8) \\
+	- x y^2 (z_1 + z_3 + 2 z_4 - 2 z_5 - z_6 + z_8)  \\
+	+ x^2 y^2 (z_1 - z_2 + z_3 - z_4 - z_5 + z_6 - z_7 + z_8).
+\end{split}
+\end{equation}
+From our Geophysics [1990] paper we know the desired surface must satisfy
+\begin{equation}
+\left( 1 - T_I\right)\nabla^4 z - T_I \nabla^2 z = \left( 1 - T_I\right)\nabla^2 C - T_I \nabla^2 z = 0.
+\label{eq:biharm}
+\end{equation}
+We also derived
+\begin{equation}
+\nabla^2 C \rvert _{0, 0} = C_{10} + C_{-10} + \alpha^2(C_{01} + C_{0-1}) - 2 (1+\alpha^2)C_{00}.
+\label{eq:curv}
+\end{equation}
+and
+\begin{equation}
+C_{00} = \nabla^2 z \rvert _{0, 0} = z_{10} + z_{-10} + \alpha^2(z_{01} + z_{0-1}) - 2 (1+\alpha^2)z_{00}.
+\end{equation}
+We will insert (\ref{eq:curv}) into (\ref{eq:biharm}) and replace $C_{00}$ with the value obtained from (\ref{eq:biquad}), then algebraically solve for $z_{00}$.
+This gives
+\begin{equation}
+\begin{split}
+z_{00} = \frac{1}{2(1+\alpha^4)} \{ 2(1+\alpha^2) \left [ z_{10}+z_{-10}+\alpha^2(z_{01}+z_{0-1})\right ] \\
+	-2\alpha^2\left [z_{11} + z_{1-1} + z_{-11} + z_{-1-1}\right ] - \left [z_{20} + z_{-20} + \alpha^4 (z_{02} + z_{0-2})\right ] \\
+	+ \left (\frac{T_I}{1-T_I} + 2(1+\alpha^2)\right )C_{00} \}.
+\label{eq:offnode}
+\end{split}
+\end{equation}
+Thus, we will use (\ref{eq:offnode}) instead of (A-7) when updating nodes with nearby data constraints.
+\end{document}
