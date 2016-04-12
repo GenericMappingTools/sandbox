@@ -88,6 +88,7 @@ are identified as NE, E1, S1, SW. The matrix equation for $b_k$ becomes
 0\\
 2
 \end{array}} \right].
+\label{eq:upper}
 \end{equation}
 The solution is identical to that for quadrant 1.
 \subsection{Third quadrant}
@@ -130,6 +131,7 @@ with solution
 {u_E^2 - v_E^2 + 2{u_E}{v_E} - {v_E} + {u_E}}\\[4pt]
 4
 \end{array}} \right].
+\label{eq:lower}
 \end{equation}
 Apart from $b_5$, this solution is clearly different from the first two quadrants and herein lies our problem.
 \subsection{Fourth quadrant}
@@ -160,4 +162,7 @@ are identified as NE, N1, W1, SW. The matrix equation for $b_k$ becomes
 The solution is identical to that for quadrant 3.
 Comparisons of the solution for the upper and lower halves reveal the differences are all proportional to
 ($u_e - v_E$), hence there are no differences when data constraints lie along the 45-degree diagonals.
+Inspection of equations (\ref{eq:upper}) and (\ref{eq:lower}) shows that they have the same form
+but $u_E$ and $v_E$ have been interchanged.  We can therefore simply use (\ref{eq:upper}) for all cases
+as long as we swap $u_E$ and $v_E$ when our point falls in quadrants 3--4.
 \end{document}
