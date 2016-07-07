@@ -1,0 +1,95 @@
+# $Id$
+# List of the various ways these modules read or write data|textsets
+# d = GMT_Get|Put_Record (GMT_DOUBLE)
+# t = GMT_Get|Put_Record (GMT_TEXT)
+# D = GMT_Read|Write_Data (GMT_IS_DATASET)
+# T = GMT_Read|Write_Data (GMT_IS_TEXTSET)
+# If number of columns is - then nothing is specified, which
+# means output cols == input cols by default
+# 
+MODULE				INTYPE	INCOLS	OUTTYPE	OUTCOLS	COMMENT
+blockmean.c			d	2-4	d	3-7
+blockmedian.c			d	3-5	d	3-9
+blockmode.c			d	3-5	d	3-8
+filter1d.c			D	any	d	-
+fitcircle.c			d	2	d|t	2+
+gmt2kml.c			D|T	any	t	-
+gmtconnect.c			D	any	D	in
+gmtconvert.c			D	any	D	in|paste
+gmtinfo.c			d		d|t	2*in
+gmtmath.c			D	any	D	in+
+gmtregress.c			D	2-3	d	7
+gmtselect.c			d|m	-	d|m	in
+gmtimplify.c			D	any	D	in
+gmtspatial.c			D	-	d|m|D	yes
+gmtvector.c			D	2-3	D	2-3
+gmtwhich.c			-	-	t	-
+grd2xyz.c			G	-	d|t	1-4		Old ESRI output option v4
+grdblend.c			t	-	G	-
+grdcontour.c			G	-	D	3
+grdedit.c			d	-	G	-
+grdhisteq.c			G	-	d	-
+grdinfo.c			G	-	d|t	6+
+grdmask.c			D	2	G	-
+grdraster.c			G	-	d	3
+grdtrack.c			d|m	-	d|m	in+
+grdvolume.c			G	-	d	4
+greenspline.c			d	2-6	d	2-4
+kml2gmt.c			-	-	d	2-3
+mapproject.c			d|m	-	d|m	in+
+nearneighbor.c			d	3-4	-	-
+project.c			d|m	-	d|m	yes
+psclip.c			D	2	-	-
+pscoast.c			-	-	d|t	2
+pscontour.c			d	3	D	3
+pshistogram.c			d	1	d|D	2|4
+pslegend.c			T	-	-	-
+psmask.c			d	2	D	2
+psrose.c			d	1|2	-	-
+pssolar.c			-	-	d|t	2|10
+pstext.c			t	-	-	-
+pswiggle.c			D	3	-	-
+psxy.c				d|t|D	2+	-	-
+psxyz.c				d|t|D	3+	-	-
+sample1d.c			D	in	D	in
+spectrum1d.c			D	2-3	D	+
+sph2grd.c			D	4	G	-
+sphdistance.c			d	3	G	-
+sphinterpolate.c		d	3	G	-
+sphtriangulate.c		d	2	D	-
+splitxyz.c			D	2+	D	in+
+surface.c			d	3	G	-
+trend1d.c			d	2-3	d	yes
+trend2d.c			d	3-4	d	yes
+triangulate.c			d	2-3	d	2-3
+xyz2grd.c			d	1-3	d	1
+gshhs/gshhs.c			-	-	D|T	2
+meca/pscoupe.c			t	-	-	-
+meca/psmeca.c			t	-	-	-
+meca/pspolar.c			t	-	-	-
+meca/psvelo.c			t	-	-	-
+mgd77/mgd77list.c		-	-	d|m	yes
+mgd77/mgd77magref.c		-	-	d	yes
+misc/dimfilter.c		-	-	d	3
+potential/gmtgravmag3d.c	-	-	d	3
+potential/gmtflexure.c		D	2	D	2
+potential/gpsgridder.c		d	4/6	d	4
+potential/grdgravmag3d.c	-	-	d	3
+potential/grdseamount.c		T	4+	d	in+3
+potential/talwani2d.c		D	2	D	in+
+potential/talwani3d.c		D	2	d	4
+spotter/backtracker.c		d	yes	d	yes
+spotter/gmtpmodeler.c		d	yes	d	yes
+spotter/grdpmodeler.c		-	-	d	yes
+spotter/grdspotter.c		-	-	d	3
+spotter/hotspotter.c		-	5	-	-
+spotter/originator.c		d	yes	d|m	yes
+spotter/rotconverter.c		-	-	d	yes
+x2sys/x2sys_binlist.c		-	-	t	-	
+x2sys/x2sys_cross.c		-	-	d	yes
+x2sys/x2sys_datalist.c		-	-	d|m	yes
+x2sys/x2sys_get.c		-	-	t	-
+x2sys/x2sys_list.c		-	-	d|m	yes
+x2sys/x2sys_merge.c		-	-	t	-
+x2sys/x2sys_report.c		-	-	t	-
+x2sys/x2sys_solve.c		-	-	t	-
