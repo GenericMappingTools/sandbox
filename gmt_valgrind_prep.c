@@ -24,12 +24,15 @@
 #include <string.h>
 
 #define N 10000	/* Lazy so just assume max this many suppressions */
+char *prefix[] = { "GMT_", "PSL_", "gmt_", "gmtlib_", "psl_", "agc_", "api_", "bcr_", "calclock_", 
+				   "dcw_", "esri_", "gmtfft_", "grdio_", "gmtinit_", "gmtio_", "gmtnc_", "parse_",
+				   "plot_", "proj_", "shore_", "gmtstat_", "support_", "vector_", NULL};
 
 int main () {
 	char *item[N], *key[N];
 	char buffer[10000] = {""}, top[10000] = {""}, line[BUFSIZ] = {""};
 	char *s = NULL;
-	unsigned int n_unique = 0, n_in = 0, k, j = 0, n_gmt = 0, first;
+	unsigned int n_unique = 0, n_in = 0, k, j = 0, n_gmt = 0, first, is_gmt, p;
 	
 	while (fgets (line, BUFSIZ, stdin)) {	/* Read until EOF */
 		if (line[0] == '{') {	/* Start of a suppression block report */
@@ -70,7 +73,13 @@ int main () {
 	}
 	/* Now print out the unique entries, giving them unique names in the process */
 	for (k = j = 0; k < n_unique; k++) {
-		if (strstr (key[k], "GMT_") || strstr (key[k], "PSL_") || strstr (key[k], "gmt_") || strstr (key[k], "psl_"))	{	/* This one ends in a GMT/PSL call so we DONT want to suppress it */
+		is_gmt = p = 0;
+		while (!is_gmt && prefix[p]) {
+			if (strstr (key[k], prefix[p++]))
+				is_gmt = 1;
+		}
+
+		if (is_gmt)	{	/* This was a GMT function call so we DONT want to suppress it */
 			n_gmt++;
 			fprintf (stderr, "{\n%s}\n", item[k]);
 			continue;
