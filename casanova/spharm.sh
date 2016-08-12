@@ -8,7 +8,7 @@ ps=spharm.ps
 # Wieczorek, M. A., Gravity and topography of the terrestrial planets,
 #   Treatise on Geophysics, 10, 165-205, doi:10.1016/B978-044452748-6/00156-5, 2007
 
-gmt sph2grd VenusTopo180.txt -I30m -Rg -Ng -Gv.nc -F1/1/719/719 -V
+gmt sph2grd VenusTopo180.txt -I15m -Rg -Ng -Gv.nc -F1/1/719/719 -V
 gmt grd2cpt v.nc -Crainbow -E > t.cpt
 gmt grdgradient v.nc -Nt0.75 -A45 -Gvint.nc
 gmt grdimage v.nc -Ivint.nc -JG90/30/7i -P -Bg -Ct.cpt -Xc > $ps
