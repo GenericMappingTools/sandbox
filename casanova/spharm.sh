@@ -11,6 +11,6 @@ ps=spharm.ps
 gmt sph2grd VenusTopo180.txt -I30m -Rg -Ng -Gv.nc -F1/1/719/719 -V
 gmt grd2cpt v.nc -Crainbow -E > t.cpt
 gmt grdgradient v.nc -Nt0.75 -A45 -Gvint.nc
-gmt grdimage v.nc -Ivint.nc -JG7i -P -Bg -Ct.cpt -Xc > $ps
+gmt grdimage v.nc -Ivint.nc -JG90/30/7i -P -Bg -Ct.cpt -Xc > $ps
 gmt psconvert -Tf -P -Z $ps
-rm -f v*.nc t.cpt
+rm -f vint.nc t.cpt
