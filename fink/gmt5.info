@@ -1,6 +1,6 @@
 Package: gmt5
 Version: 5.2.1
-Revision: 4
+Revision: 5
 Source: ftp://ftp.soest.hawaii.edu/gmt/gmt-%v-src.tar.xz
 Source-MD5: 4823ab45965a55d5d8869181ae3b0cca
 SourceDirectory: gmt-%v
@@ -38,7 +38,6 @@ CompileScript: <<
 	-DGDAL_ROOT=%p \
 	-DPCRE_ROOT=%p \
 	-DBLA_VENDOR=Apple \
-	-DGMT_INSTALL_RELOCATABLE=off \
 	-DCMAKE_OSX_DEPLOYMENT_TARGET= \
 	..
   make
