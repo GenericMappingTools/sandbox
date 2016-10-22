@@ -1,8 +1,8 @@
 Package: gmt5
-Version: 5.2.1
-Revision: 5
-Source: ftp://ftp.soest.hawaii.edu/gmt/gmt-%v-src.tar.xz
-Source-MD5: 4823ab45965a55d5d8869181ae3b0cca
+Version: 5.3.1
+Revision: 1
+Source: ftp://ftp.soest.hawaii.edu/gmt/gmt-%v-src.tar.gz
+Source-MD5: 77b83f91c65a5ea47e4af1b8e69ab4a3
 SourceDirectory: gmt-%v
 
 Conflicts: gmt
@@ -68,10 +68,10 @@ SplitOff2: <<
   <<
   RuntimeDepends: ghostscript
   Shlibs: <<
-    %p/lib/libgmt.5.dylib 5.0.0 %n (>= 5.2.1-1)
-    %p/lib/libpostscriptlight.5.dylib 5.0.0 %n (>= 5.2.1-1)
+    %p/lib/libgmt.5.dylib 5.0.0 %n (>= 5.3.1-1)
+    %p/lib/libpostscriptlight.5.dylib 5.0.0 %n (>= 5.3.1-1)
   <<
-  DocFiles: ChangeLog LICENSE.TXT README src/README.TRIANGLE src/TRIANGLE.HOWTO
+  DocFiles: COPYING.LESSERv3 COPYINGv3 LICENSE.TXT README src/README.TRIANGLE src/TRIANGLE.HOWTO
 <<
 SplitOff3: <<
   Package: %N-dev
@@ -80,7 +80,7 @@ SplitOff3: <<
   Replaces: gmt-dev
   BuildDependsOnly: True
   Files: include lib/*.dylib
-  DocFiles: ChangeLog LICENSE.TXT README* src/README.TRIANGLE src/TRIANGLE.HOWTO
+  DocFiles: COPYING.LESSERv3 COPYINGv3 LICENSE.TXT README src/README.TRIANGLE src/TRIANGLE.HOWTO
 <<
 Description: Generic Mapping Tools
 DescDetail: <<
@@ -95,6 +95,6 @@ DescDetail: <<
   such as GSHHG coastlines, rivers, and political boundaries.
 <<
 License: GPL, Restrictive/Distributable
-DocFiles: ChangeLog LICENSE.TXT README src/README.TRIANGLE src/TRIANGLE.HOWTO
+DocFiles: COPYING.LESSERv3 COPYINGv3 LICENSE.TXT README src/README.TRIANGLE src/TRIANGLE.HOWTO
 Maintainer: Kurt Schwehr <goatbar@users.sourceforge.net>
 Homepage: http://gmt.soest.hawaii.edu/
