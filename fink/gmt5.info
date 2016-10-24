@@ -1,8 +1,8 @@
 Package: gmt5
 Version: 5.3.1
 Revision: 1
-Source: ftp://ftp.soest.hawaii.edu/gmt/gmt-%v-src.tar.gz
-Source-MD5: 77b83f91c65a5ea47e4af1b8e69ab4a3
+Source: ftp://ftp.soest.hawaii.edu/gmt/gmt-%v-src.tar.xz
+Source-MD5: 6b2c393c99c47c54c71fac254af39852
 SourceDirectory: gmt-%v
 
 Conflicts: gmt
