@@ -34,7 +34,25 @@
 # to spell-check (grids, PDFs, PS).  There are probably stuff in the settings of
 # WORDS_WHITE_LIST that can be removed (I dont understand that part) and I had
 # to create a blank typos_whitelist.txt to prevent the script from crashing.
+# Run as
+# gmt5-dev/sandbox/guru/fix_typos.sh <top dir of trunk or a branch>, e.g.
+# cd ....../branches/5.3
+# 
 # Paul Wessel, Nov 8, 2016
+
+if [ $# -ne 1 ]; then
+	echo "usage: fix_typos.sh <topdir>"
+	exit
+fi
+
+pversion=`python --version | awk '{printf "%s\n", substr($2,1,1)}'`
+if [ ! "X${pversion}" = "X3" ]; then
+	echo "fix_typos.sh requires Python 3"
+	exit
+fi
+HERE=`pwd`
+DIR=$1
+cd $DIR
 
 if ! test -d fix_typos; then
     # Get our fork of codespell that adds --words-white-list and full filename support for -S option
@@ -71,4 +89,4 @@ WORDS_WHITE_LIST="$WORDS_WHITE_LIST,THRESHHOLD_BILEVEL,THRESHHOLD_HALFTONE,THRES
 
 python fix_typos/codespell/codespell.py -w -i 3 -q 2 -S $EXCLUDED_FILES \
     -x typos_whitelist.txt --words-white-list=$WORDS_WHITE_LIST \
-    -D fix_typos/gmt_dict.txt  ..
+    -D fix_typos/gmt_dict.txt .
