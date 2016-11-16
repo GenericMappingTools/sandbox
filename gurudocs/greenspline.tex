@@ -1,0 +1,107 @@
+%	$Id$
+% Internal documentation for Solving greenspline
+% Paul Wessel, November 16, 2016.
+\documentclass[12pt,letterpaper,margin=0.5in]{report}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{breqn}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{lscape}
+\textheight = 9 in
+\topmargin = -1 in
+\begin{document}
+
+\section{GREENSPLINE MATRIX SOLUTION}
+
+We refer to equations (2) and (3) in {\it Wessel} [2009].  Those equations constitute a linear system {\bf Ax} = {\bf b}
+of dimensions $(n+m)$ by $(n+m)$, where there are $n$ data observations $z_i$ and $m$
+slope observations $s_i$ in the directions ${\mathbf n}_i$. We can write this as
+
+
+% MathType!MTEF!2!1!+-
+% faaagCart1ev2aaaKnaaaaWenf2ys9wBH5garuavP1wzZbqedmvETj
+% 2BSbqefm0B1jxALjharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepe0t
+% bbL8FesqqrFfpeea0xe9Lq-Jc9vqaqpepm0xbba9pwe9Q8fs0-yqaq
+% pepae9pg0FirpepeKkFr0xfr-xfr-xb9Gqpi0dc9adbaqaaeGaciGa
+% aiaabeqaamaabaabaaGcbaWaamWaaeaafaWabeGbgaeaabqaaiaadE
+% gadaWgaaWcbaGaaGymaiaacYcacaaIXaaabeaakiaadEhadaqhaaWc
+% baGaaGymaaqaaaaaaOqaaiabl+UimbqaaiaadEgadaWgaaWcbaGaaG
+% ymaiaacYcacaWGUbaabeaakiaadEhadaqhaaWcbaGaaGymaaqaaaaa
+% aOqaaiaadEgadaWgaaWcbaGaaGymaiaacYcacaWGUbGaey4kaSIaaG
+% ymaaqabaGccaWG3bWaa0baaSqaaiaaigdaaeaaaaaakeaacqWIVlct
+% aeaacaWGNbWaaSbaaSqaaiaaigdacaGGSaGaamOBaiabgUcaRiaad2
+% gaaeqaaOGaam4DamaaDaaaleaacaaIXaaabaaaaaGcbaGaeSO7I0ea
+% baGaeSy8I8eabaGaeSO7I0eabaGaeSO7I0eabaGaeSy8I8eabaGaeS
+% O7I0eabaGaam4zamaaBaaaleaacaWGUbGaaiilaiaaigdaaeqaaOGa
+% am4DamaaDaaaleaacaWGUbaabaaaaaGcbaGaeS47IWeabaGaam4zam
+% aaBaaaleaacaWGUbGaaiilaiaad6gaaeqaaOGaam4DamaaDaaaleaa
+% caWGUbaabaaaaaGcbaGaam4zamaaBaaaleaacaWGUbGaaiilaiaad6
+% gacqGHRaWkcaaIXaaabeaakiaadEhadaqhaaWcbaGaamOBaaqaaaaa
+% aOqaaiabl+UimbqaaiaadEgadaWgaaWcbaGaamOBaiaacYcacaWGUb
+% Gaey4kaSIaamyBaaqabaGccaWG3bWaa0baaSqaaiaad6gaaeaaaaaa
+% keaacaWGKbWaaSbaaSqaaiaad6gacqGHRaWkcaaIXaGaaiilaiaaig
+% daaeqaaOGaam4DamaaDaaaleaacaWGUbGaey4kaSIaaGymaaqaaaaa
+% aOqaaiabl+UimbqaaiaadsgadaWgaaWcbaGaamOBaiabgUcaRiaaig
+% dacaGGSaGaamOBaaqabaGccaWG3bWaa0baaSqaaiaad6gacqGHRaWk
+% caaIXaaabaaaaaGcbaGaaGimaaqaaiabl+UimbqaaiaadsgadaWgaa
+% WcbaGaamOBaiabgUcaRiaaigdacaGGSaGaamOBaiabgUcaRiaad2ga
+% aeqaaOGaam4DamaaDaaaleaacaWGUbGaey4kaSIaaGymaaqaaaaaaO
+% qaaiabl6UinbqaaiablgVipbqaaiabl6Uinbqaaiabl6Uinbqaaiab
+% lgVipbqaaiabl6UinbqaaiaadsgadaWgaaWcbaGaamOBaiabgUcaRi
+% aad2gacaGGSaGaaGymaaqabaGccaWG3bWaa0baaSqaaiaad6gacqGH
+% RaWkcaWGTbaabaaaaaGcbaGaeS47IWeabaGaamizamaaBaaaleaaca
+% WGUbGaey4kaSIaamyBaiaacYcacaWGUbaabeaakiaadEhadaqhaaWc
+% baGaamOBaiabgUcaRiaad2gaaeaaaaaakeaacaWGKbWaaSbaaSqaai
+% aad6gacqGHRaWkcaWGTbGaaiilaiaad6gacqGHRaWkcaaIXaaabeaa
+% kiaadEhadaqhaaWcbaGaamOBaiabgUcaRiaad2gaaeaaaaaakeaacq
+% WIVlctaeaacaaIWaaaaaGaay5waiaaw2faaiabgwSixpaadmaabaqb
+% amqabyqaabaabaGaeqySde2aaSbaaSqaaiaaigdaaeqaaaGcbaGaeS
+% O7I0eabaGaeqySde2aaSbaaSqaaiaad6gaaeqaaaGcbaGaeqySde2a
+% aSbaaSqaaiaad6gacqGHRaWkcaaIXaaabeaaaOqaaiabl6Uinbqaai
+% abeg7aHnaaBaaaleaacaWGUbGaey4kaSIaamyBaaqabaaaaaGccaGL
+% BbGaayzxaaGaeyypa0ZaamWaaeaafaWabeGbbaeaaeaacaWG6bWaaS
+% baaSqaaiaaigdaaeqaaOGaam4DamaaDaaaleaacaaIXaaabaaaaaGc
+% baGaeSO7I0eabaGaamOEamaaBaaaleaacaWGUbaabeaakiaadEhada
+% qhaaWcbaGaamOBaaqaaaaaaOqaaiaadohadaWgaaWcbaGaaGymaaqa
+% baGccaWG3bWaa0baaSqaaiaad6gacqGHRaWkcaaIXaaabaaaaaGcba
+% GaeSO7I0eabaGaam4CamaaBaaaleaacaWGTbaabeaakiaadEhadaqh
+% aaWcbaGaamOBaiabgUcaRiaad2gaaeaaaaaaaaGccaGLBbGaayzxaa
+% aaaa!F91F!
+\[
+\left[ {\begin{array}{*{20}{c}}
+{{g_{1,1}}w_1^{}}& \cdots &{{g_{1,n}}w_1^{}}&\vline& {{g_{1,n + 1}}w_1^{}}& \cdots &{{g_{1,n + m}}w_1^{}}\\
+ \vdots & \ddots & \vdots &\vline&  \vdots & \ddots & \vdots \\
+{{g_{n,1}}w_n^{}}& \cdots &{{g_{n,n}}w_n^{}}&\vline& {{g_{n,n + 1}}w_n^{}}& \cdots &{{g_{n,n + m}}w_n^{}}\\
+\hline
+{{d_{n + 1,1}}w_{n + 1}^{}}& \cdots &{{d_{n + 1,n}}w_{n + 1}^{}}&\vline& 0& \cdots &{{d_{n + 1,n + m}}w_{n + 1}^{}}\\
+ \vdots & \ddots & \vdots &\vline&  \vdots & \ddots & \vdots \\
+{{d_{n + m,1}}w_{n + m}^{}}& \cdots &{{d_{n + m,n}}w_{n + m}^{}}&\vline& {{d_{n + m,n + 1}}w_{n + m}^{}}& \cdots &0
+\end{array}} \right] \cdot \left[ {\begin{array}{*{20}{c}}
+{{\alpha _1}}\\
+ \vdots \\
+{{\alpha _n}}\\
+\hline
+{{\alpha _{n + 1}}}\\
+ \vdots \\
+{{\alpha _{n + m}}}
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+{{z_1}w_1^{}}\\
+ \vdots \\
+{{z_n}w_n^{}}\\
+\hline
+{{s_1}w_{n + 1}^{}}\\
+ \vdots \\
+{{s_m}w_{n + m}^{}}
+\end{array}} \right]
+\]
+
+Here, $g_{i,j}$ are the Green’s functions evaluated for the radial distance between points $i$ and $j$
+while $d_{i,j}$ are the dot-products of the gradient of the Green's functions and the directional unit vector, ${\mathbf n}_j$.
+Note we have scaled each equation by the weight $w_i$
+(= $1/\sigma_i$) for the $i$’th data measurement; for unweighted data, these are all unity.
+Having solved for the coefficients $\alpha_i$ we evaluate the solution using (1).
+
+\section{REFERENCES}
+
+Wessel, P. (2009), A general-purpose Green's function-based interpolator, {\it Computers \& Geosciences, 35}, 1247--1254, doi:10.1016/j.cageo.2008.08.012.
+\end{document}
