@@ -48,6 +48,9 @@ fi
 pversion=`python --version | awk '{printf "%s\n", substr($2,1,1)}'`
 if [ ! "X${pversion}" = "X3" ]; then
 	echo "fix_typos.sh requires Python 3"
+	echo "Under macports, find a 3+ python version and select it:"
+	echo "port select --list python"
+	echo "sudo port select --set python python35"
 	exit
 fi
 HERE=`pwd`
@@ -73,7 +76,7 @@ fi
 
 EXCLUDED_FILES="*/.svn*,configure,config.status,config.sub,*/autom4te.cache/*"
 EXCLUDED_FILES="$EXCLUDED_FILES,*/doc/br/*,*/data/*,figures.mp,*/tmp/*,*/ruby/*,*.grd"
-EXCLUDED_FILES="$EXCLUDED_FILES,*/localization/*,*.jpg,*.png"
+EXCLUDED_FILES="$EXCLUDED_FILES,*/localization/*,*.jpg,*.png,*.xyg,*.xym,tracks.txt,oz_quakes.txt,gshhs_c.txt,carter.d"
 EXCLUDED_FILES="$EXCLUDED_FILES,*/dbuild/*,*/rbuild/*,*/dbuild-mp/*,*/xbuild/*"
 EXCLUDED_FILES="$EXCLUDED_FILES,*/fix_typos/*,fix_typos.sh,*.eps,*.ps,*.pdf,europe-capitals-ru.csv"
 EXCLUDED_FILES="$EXCLUDED_FILES,dbuild/*,rbuild/*,dbuild-mp/*,LICENCE.txt,*.CM4,*.nc,*.rot,*.segy"
@@ -86,6 +89,10 @@ WORDS_WHITE_LIST="$WORDS_WHITE_LIST,JBUF_PASS_THRU"
 WORDS_WHITE_LIST="$WORDS_WHITE_LIST,IS_WRITEABLE,E_GIF_ERR_NOT_WRITEABLE"
 # libtiff
 WORDS_WHITE_LIST="$WORDS_WHITE_LIST,THRESHHOLD_BILEVEL,THRESHHOLD_HALFTONE,THRESHHOLD_ERRORDIFFUSE"
+
+if [ ! -f typos_whitelist.txt ]; then	# If no such file, make an empty one
+	touch typos_whitelist.txt
+fi
 
 python fix_typos/codespell/codespell.py -w -i 3 -q 2 -S $EXCLUDED_FILES \
     -x typos_whitelist.txt --words-white-list=$WORDS_WHITE_LIST \
