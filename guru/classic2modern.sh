@@ -63,6 +63,10 @@ while read line; do
 		echo $line
 		continue
 	fi
+	skip=`echo $line | grep -c 'gmt psxy -R -J -O -T'`
+	if [ $skip -eq 1 ]; then	# Remove such lines that completes the ps
+		continue;
+	fi
 	ps=`echo $line | grep -f PStools.txt -c`
 	this_set=`echo $line | grep -c 'gmt set|gmtset'`
 	if [ $this_set -gt 0 ] || [ $has_set -eq 0 ]; then	# Add after another gmtset or there was none to begin with
