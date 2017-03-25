@@ -12,7 +12,7 @@
 #
 # It assumes only a single PS plot is generated, so things like example_03.sh cannot be used.
 # It also assumes we are producing a PS plot, i.e., there are no psconvert calls already.
-cat << EOF > PStools.txt
+cat << EOF > /tmp/PStools.txt
 gmtlogo
 grdcontour
 grdimage
@@ -42,19 +42,19 @@ mgd77track
 pssegyz
 pssegy
 EOF
-cat << EOF > sed.job
+cat << EOF > /tmp/sed.job
 s/ \-O//g
 s/ \-K//g
 s/\-R //g
 s/\-J //g
 EOF
-ps=`grep -f PStools.txt -c $1`
+ps=`grep -f /tmp/PStools.txt -c $1`
 if [ $ps -eq 0 ]; then
 	echo "$0: Not a PostScript-producing GMT script" >&2
 	exit
 fi
 has_set=`grep -c 'gmt set|gmtset' $1`
-psfile=`grep '^ps=.*\.ps' $1`
+psfile=`grep '^ps=.*\.ps' $1 | awk '{print substr($0,4)}'`
 name=`basename $psfile ".ps"`
 was_ps=0
 while read line; do
@@ -67,16 +67,16 @@ while read line; do
 	if [ $skip -eq 1 ]; then	# Remove such lines that completes the ps
 		continue;
 	fi
-	ps=`echo $line | grep -f PStools.txt -c`
+	ps=`echo $line | grep -f /tmp/PStools.txt -c`
 	this_set=`echo $line | grep -c 'gmt set|gmtset'`
 	if [ $this_set -gt 0 ] || [ $has_set -eq 0 ]; then	# Add after another gmtset or there was none to begin with
 		echo $line
 		echo "gmt set GMT_RUNMODE modern"
 		has_set=1
 	elif [ $ps -gt 0 ]; then
-		echo $line | sed -f sed.job | awk -F'>' '{printf "%s\n", $1}'
+		echo $line | sed -f /tmp/sed.job | awk -F'>' '{printf "%s\n", $1}' | sed 's/[ \t]*$//'
 	else
-		echo $line | sed -f sed.job
+		echo $line | sed -f /tmp/sed.job
 	fi
 	was_ps=ps
 done < $1
