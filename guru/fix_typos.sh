@@ -45,7 +45,7 @@ if [ $# -ne 1 ]; then
 	exit
 fi
 
-pversion=`python --version | awk '{printf "%s\n", substr($2,1,1)}'`
+pversion=`python --version 2>&1 | awk '{printf "%s\n", substr($2,1,1)}'`
 if [ ! "X${pversion}" = "X3" ]; then
 	echo "fix_typos.sh requires Python 3"
 	echo "Under macports, find a 3+ python version and select it:"
