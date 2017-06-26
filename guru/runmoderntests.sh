@@ -1,4 +1,14 @@
 #!/bin/bash
+# Run all the modern test scripts
+# FIrst remove old modern folders and recreate them
+rm -rf test/modern_*
+for f in $( ls test ); do 
+    if [[ -d "test/$f" ]]; then 
+        gmtmodernize --recursive test/$f test/modern_$f 
+    fi 
+done
+# No step into test dir and run the tests.
+
 cd test
 ls -d modern_* > d.lis
 while read dir; do
