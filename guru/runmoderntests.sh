@@ -1,10 +1,10 @@
 #!/bin/bash
 # Run all the modern test scripts
-# FIrst remove old modern folders and recreate them
+# First remove old modern folders and recreate them
 rm -rf test/modern_*
 for f in $( ls test ); do 
     if [[ -d "test/$f" ]]; then 
-        gmtmodernize --recursive test/$f test/modern_$f 
+        gmtmodernize --recursive --quiet test/$f test/modern_$f 
     fi 
 done
 # No step into test dir and run the tests.
@@ -24,6 +24,7 @@ while read dir; do
 		cat <<- EOF > gmtest.sh
 		#!/bin/bash
 		export GMT_SOURCE_DIR="$GMTHOME5/trunk"
+		export GMT_SRCDIR=`pwd`
 		# Start with proper GMT defaults
 		gmt set -Du
 		# Now run the original script
