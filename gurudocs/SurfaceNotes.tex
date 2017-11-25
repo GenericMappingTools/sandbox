@@ -1,0 +1,134 @@
+%	$Id$
+% Internal documentation for SOliving Briggs coefficients
+% Paul Wessel, April 21, 2015.
+\documentclass[12pt,letterpaper,margin=0.5in]{article}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{breqn}
+\usepackage[margin=1in]{geometry}
+\newcommand{\PDFfig}[4][tbp]{\begin{figure}[#1] \centering \epsfig{figure=#2,width=#4} \caption{{\small #3}} \label{fig:#2} \end{figure}}
+
+\begin{document}
+
+\section{THE SURFACE ALGORITHM}
+
+The 1990 Smith and Wessel Geophysics article (here SW90) discusses the
+algorithm we use to perform gridding with continuous curvature splines in tension.
+This document discusses some of the nitty-gritty details that are used in the
+implementation of surface.c. This implementation was written during GMT 1 days
+and used a Fortran west-to-east column arrangement with rows increasing upwards.
+Since GMT 2 we have been using a scanline arrangements with rows arranged from north
+to south and each column marches from west to east.  Thus, we would like to recast
+the surface algorithm to use this node arrangement to avoid having to transpose
+the matrix at the end, and to take advantage of the GMT library functions that
+all expect scanline orientation.  Sections below discusses various aspects of the
+algorithm and at times proposed improvements.
+
+\section{BRIGGS COEFFICIENT SOLUTIONS}
+
+\PDFfig[h]{off_surface_nodes}{The four quadrants (1-4) where a data constraint (E) may be located.  The Briggs
+solution published in SW90 is defined for the first quadrant (pink) only.  Other quadrants must be rotated
+so that the point E falls into the first quadrant and A--D can be identified.  Black square is the central node (0,0).}{3in}
+
+Most data constraints are likely not to fall exactly (or even very close) to the
+desired output nodes and we must find a way to include them in the finite difference
+solution.  Figure~\ref{fig:off_surface_nodes} shows the four cases we must consider since
+a point may fall into any of the four quadrants surrounding our central node.
+We have followed Briggs [1974] in connecting the off-node point via a
+second-order Taylor expansion from the central node ($z_{00}$) to a nearby point $z_k$:
+\begin{equation}
+	z_k = z_{00} + \xi_k \frac{\partial z}{\partial x} + \eta_k \frac{\partial z}{\partial x} \
+	+ \frac{1}{2} \xi^2_k \frac{\partial^2 z}{\partial x^2} + \xi_k \eta_k \frac{\partial^2 z}{\partial x \partial y} \
+	+ \frac{1}{2}  \eta^2_k \frac{\partial^2 z}{\partial y^2}.
+\end{equation}
+Here, the coordinates of the off-node points ($\xi_k, \eta_k$) are defined on a normalized
+grid where the grid cell of dimension $\Delta x$ by $\Delta y$ equals 1x1, i.e.,
+\begin{equation}
+\xi_k = \frac{x_k-x_{00}}{\Delta x} \quad \alpha \eta_k = \frac{y_k-y_{00}}{\Delta y} = \frac{y_k-y_{00}}{\Delta x},
+\end{equation}
+where $\alpha = \Delta y/ \Delta x$ is the grid spacing anisotropy.
+The Briggs scheme is to evaluate this expansion to the five distinct points A--E, here identified as $(\xi_k, \eta_k), k = 1,5$.
+We then multiply each expansion by a real number $b_k$ and sum the five expressions:
+\begin{equation}
+	\sum b_k z_k = z_{00}\sum b_k  + \sum b_k \xi_k \frac{\partial z}{\partial x} + \sum b_k \eta_k \frac{\partial z}{\partial x} \
+	+ \frac{1}{2} \sum b_k \xi^2_k \frac{\partial^2 z}{\partial x^2} + \sum b_k \xi_k \eta_k \frac{\partial^2 z}{\partial x \partial y} \
+	+ \frac{1}{2} \sum b_k \eta^2_k \frac{\partial^2 z}{\partial y^2}.
+\end{equation}
+If the $b_k$ can be chosen so that
+\begin{equation}
+\sum b_k \xi_k = \sum b_k \eta_k = \sum b_k \xi_b \eta_k = 0, \quad \sum b_k \xi^2_k = \sum b_k \eta^2_k = 2,
+\label{eq:define}
+\end{equation}
+then (since all derivatives are evaluated at the central node and thus independent of $k$) we find
+\begin{equation}
+	\sum b_k z_k = z_{00}\sum b_k  + \frac{\partial^2 z}{\partial x^2} + \frac{\partial^2 z}{\partial y^2}.
+\end{equation}
+which we use to obtain the curvature at the origin:
+\begin{equation}
+	\nabla^2 z = \sum b_k z_k - z_{00}\sum b_k.
+\end{equation}
+A data constraint E in the first quadrant has relative fractional coordinates ($u_E, v_E$).  This means
+we obtained these coordinates via
+\begin{equation}
+	u_E = \frac{x_e - x_0}{\Delta x} = \xi_E, \quad v_E = \frac{y_e - y_0}{\Delta y} = \alpha \eta_E.
+\end{equation}
+The other four points required are
+nodes on the grid and these have relative, fractional $x$- and $y$-coordinates belonging to the set \{$-1, 0, +1$\},
+depending on which node we consider. The five equations in (\ref{eq:define}) results in a 5x5 linear system $\mathbf{Mb} = \mathbf{r}$.
+The four nodes used in the construction for quadrant 1 are labeled \{NW, W1, S1, SE\}
+and reflect their positions relative to the central (0,0) node.
+The coordinates of these four points populate the first four columns in the matrix $\mathbf{M}$, while point E
+contributes to the 5th column. Hence, the matrix equation
+for $b_k$ becomes
+\begin{equation}
+\left[ {\begin{array}{*{20}{r}}
+{ - 1}&{ - 1}&0&1&{{u_E}}\\
+1&0&{ - 1}&{ - 1}&{{v_E}}\\
+1&1&0&1&{u_E^2}\\
+{ - 1}&0&0&{ - 1}&{{u_E}{v_E}}\\
+1&0&1&1&{v_E^2}
+\end{array}} \right] \cdot \left[ {\begin{array}{*{20}{c}}
+{{b_1}}\\
+{{b_2}}\\
+{{b_3}}\\
+{{b_4}}\\
+{{b_5}}
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+0\\
+0\\
+2\\
+0\\
+2\alpha^2
+\end{array}} \right].
+\end{equation}
+Given $u_E = \xi$ and $v_E = \alpha \eta$ this matrix equation is identical to what we published in SW90. 
+Introducing $\Delta = \left (u_E + v_E + 1 \right)\left (u_E + v_E\right)$ we find
+the solution
+\begin{equation}
+\left[ {\begin{array}{*{20}{c}}
+{{b_1}}\\
+{{b_2}}\\
+{{b_3}}\\
+{{b_4}}\\
+{{b_5}}
+\end{array}} \right] = \frac{1}{\Delta }\left[ {\begin{array}{*{20}{c}}
+{\alpha^2(u_E^2 + 2{u_E}{v_E} + {u_E}) - (v_E^2 + {v_E})}\\[4pt]
+{2\left( {{v_E} - \alpha^2{u_E} + \alpha^2} \right)\left( {{u_E} + {v_E}} \right)}\\[4pt]
+{2\left( {\alpha^2{u_E} - {v_E} + 1} \right)\left( {{u_E} + {v_E}} \right)}\\[4pt]
+{v_E^2 + {v_E} + 2{u_E}{v_E} - \alpha^2(u_E^2 + {u_E})}\\[4pt]
+2(1+\alpha^2)
+\end{array}} \right]
+\label{eq:upper}
+\end{equation}
+With $\mathbf{M}$ hardwired for quadrant one we must rotate any other quadrant case to coincide with the
+node geometry of quadrant 1.  Figure~\ref{fig:off_surface_nodes_rot} shows which nodes must serve as
+the four surrounding nodes A--D.  Also, note that we must also take care to
+\PDFfig[h]{off_surface_nodes_rot}{Rotating quadrants 2--4 yields cases that matches the first quadrant,
+allowing us to select which nodes play the roles of A-D and what the coordinates of E should be.}{3in}
+\begin{enumerate}
+	\item Use the absolute values of $u_E$ and $v_E$.
+	\item For quadrants 2 and 4 we must swap $u_E$ and $v_E$.
+\end{enumerate}
+With these considerations the $\mathbf{Mb = r}$ can be used for all quadrants.
+\end{document}

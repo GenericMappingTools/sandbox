@@ -18,7 +18,7 @@ set FIG = $name:r
 gmt set PS_SCALE_X 1 PS_SCALE_Y 1
 #-------------------------------------------------
 gmt grdmath -R-1/1/-1/1 -I1 X Y HYPOT 0 NAN = t.nc
-gmt psxy -R0/1/0/1 -JX6.5i -P -W0.5p,- -K << EOF >! $FIG.ps
+gmt psxy -R0/1/0/1 -JX6.5i -P -W0.5p,- -K -B+t"Original 4 Quadrants" --MAP_TITLE_OFFSET=0.5i << EOF >! $FIG.ps
 >
 0	0.5
 1	0.5
@@ -91,10 +91,10 @@ gmt psxy -R -J -O -K -L -W0.5p,- << EOF >> $FIG.ps
 0 0.415
 EOF
 gmt pstext -R -J -O -K -Dj0.125i/0.125i -N -F+f+j<< EOF >> $FIG.ps
--1 1 18p,Helvetica LT NW
--1 0 18p,Helvetica LT W1
-0 -1 18p,Helvetica RT S1
-1 -1 18p,Helvetica RT SE
+-1 1 18p,Helvetica LT NW (A)
+-1 0 18p,Helvetica LT W1 (B)
+0 -1 18p,Helvetica RT S1 (C)
+1 -1 18p,Helvetica RT SE (D)
 0.275 0.425 18p,Helvetica LT E
 0.3 0.3 48p,Helvetica CM *
 0.3 0.05 20p,Times-Italic CT u
@@ -185,6 +185,7 @@ EOF
 #-------------------------------------------------
 # Post-processing
 gmt psxy -R -J -O -T >> $FIG.ps
-rm -f t.grd rot.grd
-gmt psconvert $FIG.ps -Tf -P
+rm -f t.grd rot.grd back.ps
+gmt psconvert $FIG.ps -Tf -P -A
+open $FIG.pdf
 
