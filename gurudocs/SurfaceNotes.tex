@@ -13,29 +13,29 @@
 
 \section{THE SURFACE ALGORITHM}
 
-The 1990 Smith and Wessel Geophysics article (here SW90) discusses the
-algorithm we use to perform gridding with continuous curvature splines in tension.
-This document discusses some of the nitty-gritty details that are used in the
-implementation of surface.c. This implementation was written during GMT 1 days
-and used a Fortran west-to-east column arrangement with rows increasing upwards.
-Since GMT 2 we have been using a scanline arrangements with rows arranged from north
-to south and each column marches from west to east.  Thus, we would like to recast
-the surface algorithm to use this node arrangement to avoid having to transpose
-the matrix at the end, and to take advantage of the GMT library functions that
-all expect scanline orientation.  Sections below discusses various aspects of the
-algorithm and at times proposed improvements.
+Smith and Wessel [1990] (here SW90) presented an
+algorithm for gridding with continuous curvature splines in tension.
+Here, we discuss technical details of their implementation and
+correct errors in SW90. Introduced in GMT 1,
+it used a Fortran west-to-east column arrangement with a row index increasing northward.
+Since GMT 2, we have been using a scanline arrangements with rows arranged from north
+to south with a column index increasing eastward.  We would like to recast
+the algorithm to use this node arrangement to avoid a matrix transpose
+and to take advantage of GMT library functions that
+expect scanline orientated grids.  Sections below discusses various aspects of the
+algorithm and proposed improvements.
 
 \section{BRIGGS COEFFICIENT SOLUTIONS}
 
 \PDFfig[h]{off_surface_nodes}{The four quadrants (1-4) where a data constraint (E) may be located.  The Briggs
 solution published in SW90 is defined for the first quadrant (pink) only.  Other quadrants must be rotated
-so that the point E falls into the first quadrant and A--D can be identified.  Black square is the central node (0,0).}{3in}
+so that the point E falls into the first quadrant and A--D can be identified.  Black square is the central node (0,0).}{5in}
 
-Most data constraints are likely not to fall exactly (or even very close) to the
-desired output nodes and we must find a way to include them in the finite difference
+Most data constraints are not likely to fall exactly (or even very close) to the
+desired output nodes so we must find a way to include them in the finite difference
 solution.  Figure~\ref{fig:off_surface_nodes} shows the four cases we must consider since
-a point may fall into any of the four quadrants surrounding our central node.
-We have followed Briggs [1974] in connecting the off-node point via a
+a point may lie in any of the four quadrants surrounding the central node.
+We follow Briggs [1974] in connecting the off-node point via a
 second-order Taylor expansion from the central node ($z_{00}$) to a nearby point $z_k$:
 \begin{equation}
 	z_k = z_{00} + \xi_k \frac{\partial z}{\partial x} + \eta_k \frac{\partial z}{\partial x} \
@@ -43,11 +43,11 @@ second-order Taylor expansion from the central node ($z_{00}$) to a nearby point
 	+ \frac{1}{2}  \eta^2_k \frac{\partial^2 z}{\partial y^2}.
 \end{equation}
 Here, the coordinates of the off-node points ($\xi_k, \eta_k$) are defined on a normalized
-grid where the grid cell of dimension $\Delta x$ by $\Delta y$ equals 1x1, i.e.,
+grid where the grid cell of dimension $\Delta x$ by $\Delta y$ equals the unit square, i.e.,
 \begin{equation}
-\xi_k = \frac{x_k-x_{00}}{\Delta x} \quad \alpha \eta_k = \frac{y_k-y_{00}}{\Delta y} = \frac{y_k-y_{00}}{\Delta x},
+\xi_k = \frac{x_k-x_{00}}{\Delta x}, \quad \alpha \eta_k = \frac{y_k-y_{00}}{\Delta y} = \frac{y_k-y_{00}}{\Delta x},
 \end{equation}
-where $\alpha = \Delta y/ \Delta x$ is the grid spacing anisotropy.
+where $\alpha = \Delta x/ \Delta y$ is the grid spacing anisotropy (i.e., the inverse of what was reported in SW90).
 The Briggs scheme is to evaluate this expansion to the five distinct points A--E, here identified as $(\xi_k, \eta_k), k = 1,5$.
 We then multiply each expansion by a real number $b_k$ and sum the five expressions:
 \begin{equation}
@@ -102,9 +102,11 @@ for $b_k$ becomes
 2\alpha^2
 \end{array}} \right].
 \end{equation}
+\PDFfig[h]{off_surface_nodes_rot}{Rotating quadrants 2--4 yields cases that matches the first quadrant,
+allowing us to select which nodes play the roles of A-D and what the coordinates of E should be.}{5in}
 Given $u_E = \xi$ and $v_E = \alpha \eta$ this matrix equation is identical to what we published in SW90. 
 Introducing $\Delta = \left (u_E + v_E + 1 \right)\left (u_E + v_E\right)$ we find
-the solution
+the solution using MATLAB's symbolic solver to be
 \begin{equation}
 \left[ {\begin{array}{*{20}{c}}
 {{b_1}}\\
@@ -118,17 +120,37 @@ the solution
 {2\left( {\alpha^2{u_E} - {v_E} + 1} \right)\left( {{u_E} + {v_E}} \right)}\\[4pt]
 {v_E^2 + {v_E} + 2{u_E}{v_E} - \alpha^2(u_E^2 + {u_E})}\\[4pt]
 2(1+\alpha^2)
-\end{array}} \right]
-\label{eq:upper}
+\end{array}} \right].
+\label{eq:new}
 \end{equation}
-With $\mathbf{M}$ hardwired for quadrant one we must rotate any other quadrant case to coincide with the
+With $\mathbf{M}$ hardwired for quadrant 1 we must rotate other quadrant cases to coincide with the
 node geometry of quadrant 1.  Figure~\ref{fig:off_surface_nodes_rot} shows which nodes must serve as
-the four surrounding nodes A--D.  Also, note that we must also take care to
-\PDFfig[h]{off_surface_nodes_rot}{Rotating quadrants 2--4 yields cases that matches the first quadrant,
-allowing us to select which nodes play the roles of A-D and what the coordinates of E should be.}{3in}
+the four surrounding nodes A--D.  Also, it is evident that we must also take care to
 \begin{enumerate}
 	\item Use the absolute values of $u_E$ and $v_E$.
 	\item For quadrants 2 and 4 we must swap $u_E$ and $v_E$.
 \end{enumerate}
-With these considerations the $\mathbf{Mb = r}$ can be used for all quadrants.
+With these considerations the $\mathbf{Mb = r}$ solution for $\mathbf{b}$ can be used for all quadrants.
+
+In SW90 we derived the solution for $\mathbf{b}$ as
+\begin{equation}
+\left[ {\begin{array}{*{20}{c}}
+{{b_5}}\\
+{{b_4}}\\
+{{b_3}}\\
+{{b_2}}\\
+{{b_1}}
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+{\frac{2(1+\alpha^2)}{\left (u_E + v_E + 1 \right)\left (u_E + v_E\right)}}\\[4pt]
+{1 - \frac{1}{2}b_5u_E\left(1+u_E\right)}\\[4pt]
+{v_E \left(1+u_E\right)b_5 - 2b_4}\\[4pt]
+{\left(u_E+v_E\right)b_5 - b_3}\\[4pt]
+{u_Eb_5 + b_4 - b_2}
+\end{array}} \right]
+\label{eq:paper}
+\end{equation}
+which includes a correction to $b_2$ due to a typesetting error.  When we insert an arbitrary first-quadrant
+$(u_E, v_E)$ position for any value of $\alpha$ into (\ref{eq:new}) and (\ref{eq:paper}) they give identical results.
+However, the original surface implementation does not honor the swapping of $u_E$ and $v_E$ for quadrants
+2 and 4.
 \end{document}
