@@ -27,7 +27,7 @@ expect scanline orientated grids.  Sections below discusses various aspects of t
 algorithm and proposed improvements.
 
 \section{BRIGGS COEFFICIENT SOLUTIONS}
-
+\label{sec:Briggs}
 \PDFfig[h]{off_surface_nodes}{The four quadrants (1-4) where a data constraint (E) may be located.  The Briggs
 solution published in SW90 is defined for the first quadrant (pink) only.  Other quadrants must be rotated
 so that point E falls into the first quadrant and A--D can be identified.  Black square is the central node (0,0).}{5in}
@@ -192,18 +192,18 @@ for the 9 unknown coefficients $c_k$ defining the exact interpolation for quadra
 {{c_8}}\\
 {{c_9}}
 \end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
-{{z_1}}\\
-{{z_2}}\\
-{{z_3}}\\
-{{z_4}}\\
-{{z_5}}\\
-{{z_6}}\\
-{{z_7}}\\
-{{z_8}}\\
+{{z_{NW}}}\\
+{{z_{N1}}}\\
+{{z_{NE}}}\\
+{{z_{W1}}}\\
+{{z_{E1}}}\\
+{{z_{SW}}}\\
+{{z_{S1}}}\\
+{{z_{SE}}}\\
 w
 \end{array}} \right].
 \end{equation}
-Here, $z_1$ -- $z_8$ are the node values for the selected 8 grid nodes above;
+Here, $z_k$ are the node values for the selected 8 grid nodes above;
 these all have relative $u$ and $v$ coordinates in the \{$-1, 0, +1$\} set.
 The single off-node data constraint is given by ($u,v,w$).  We only need
 (\ref{eq:biquadratic}) to evaluate $C_{00} = \nabla^2 z \rvert _{0, 0} = 2 \left(c_5 + c_6 \right)$
@@ -217,25 +217,31 @@ C_{00} = \frac{D}{(u^2-1)(v^2-1)}
 with
 \begin{equation}
 \begin{split}
-D = z_2 + z_4 + z_5 + z_7 - 4w - 2u z_4 + 2 u z_5 + 2 v z_2 - 2 v z_7 - u^2 z_2   \\
-    + u^2 z_4 + u^2 z_5 - u^2 z_7 + v^2 z_2 - v^2 z_4 - v^2 z_5 + v^2 z_7 - u v^2 z_1    \\
-    + u^2 v z_1 - 2 u^2 v z_2 + u v^2 z_3 + u^2 v z_3 + 2 u v^2 z_4 - 2 u v^2 z_5 - u v^2 z_6  \\
-    - u^2 v z_6 + 2 u^2 v z_7 + u v^2 z_8 - u^2 v z_8 + u^2 v^2 z_1 - u^2 v^2 z_2 + u^2 v^2 z_3   \\
-    - u^2 v^2 z_4 - u^2 v^2 z_5+ u^2 v^2 z_6 - u^2 v^2 z_7 + u^2 v^2 z_8 - u v z_1 + u v z_3 \\
-    + u v z_6 - u v z_8.
+D = z_{N1} + z_{W1} + z_{E1} + z_{S1} - 4w - 2u z_{W1} + 2 u z_{E1} + 2 v z_{N1} - 2 v z_{S1} - u^2 z_{N1}   \\
+    + u^2 z_{W1} + u^2 z_{E1} - u^2 z_{S1} + v^2 z_{N1} - v^2 z_{W1} - v^2 z_{E1} + v^2 z_{S1} - u v^2 z_{NW}    \\
+    + u^2 v z_{NW} - 2 u^2 v z_{N1} + u v^2 z_{NE} + u^2 v z_{NE} + 2 u v^2 z_{W1} - 2 u v^2 z_{E1} - u v^2 z_{SW}  \\
+    - u^2 v z_{SW} + 2 u^2 v z_{S1} + u v^2 z_{SE} - u^2 v z_{SE} + u^2 v^2 z_{NW} - u^2 v^2 z_{N1} + u^2 v^2 z_{NE}   \\
+    - u^2 v^2 z_{W1} - u^2 v^2 z_{E1}+ u^2 v^2 z_{SW} - u^2 v^2 z_{S1} + u^2 v^2 z_{SE} - u v z_{NW} + u v z_{NE} \\
+    + u v z_{SW} - u v z_{SE}.
 \end{split}
 \end{equation}
 which we can reorganize to
 \begin{equation}
 \begin{split}
-D = (z_2 + z_4 + z_5 + z_7 - 4w)   \\
-	+ 2u (z_5 - z_4) + 2v (z_2 - z_7) + u v (z_3 + z_6 - z_1 - z_8) \\
-	- u^2 (z_4 + z_5 - z_2 - z_7) + v^2 (z_2 - z_4 - z_5 + z_7)    \\
-	+ u^2 v (z_1 - 2 z_2 + z_3 - z_6 + 2 z_7 - z_8) \\
-	- u v^2 (z_1 + z_3 + 2 z_4 - 2 z_5 - z_6 + z_8)  \\
-	+ u^2 v^2 (z_1 - z_2 + z_3 - z_4 - z_5 + z_6 - z_7 + z_8).
+D = (z_{N1} + z_{W1} + z_{E1} + z_{S1} - 4w)   \\
+	+ 2u (z_{E1} - z_{W1}) + 2v (z_{N1} - z_{S1}) + u v (z_{NE} + z_{SW} - z_{NW} - z_{SE}) \\
+	+ u^2 (z_{W1} + z_{E1} - z_{N1} - z_{S1}) + v^2 (z_{N1} - z_{W1} - z_{E1} + z_{S1})    \\
+	+ u^2 v (z_{NW} - 2 z_{N1} + z_{NE} - z_{SW} + 2 z_{S1} - z_{SE}) \\
+	+ u v^2 (z_{NE} - z_{NW} + 2 z_{W1} - 2 z_{E1} - z_{SW} + z_{SE})  \\
+	+ u^2 v^2 (z_{NW} - z_{N1} + z_{NE} - z_{W1} - z_{E1} + z_{SW} - z_{S1} + z_{SE}).
 \end{split}
+\label{eq:D}
 \end{equation}
+As given, (\ref{eq:biquad}, \ref{eq:D}) only apply for a data constraint in the first quadrant.  Using the rotation scheme discussed
+in Section~\ref{sec:Briggs} we find the same rules apply here: Use $|u|$ and $|v|$ and swap them for quadrants 2 and 4.
+The eight ordered nodes rotate accordingly, yielding the sets for quadrant 2 as \{ SW, W1, NW, S1, N1, SE, E1, NE\},
+quadrant 3 as \{ SE, S1, SW, E1, W1, NE, N1, NW\}, and quadrant 4 as \{ NE, E1, SE, N1, S1, NW, W1, SW \}.
+
 From SW90 we know the desired surface must satisfy
 \begin{equation}
 \left( 1 - T_I\right)\nabla^4 z - T_I \nabla^2 z = \left( 1 - T_I\right)\nabla^2 C - T_I \nabla^2 z = 0.
@@ -256,7 +262,7 @@ This gives
 \begin{split}
 z_{00} = \frac{1}{2(1+\alpha^4)} \{ 2(1+\alpha^2) \left [ z_{10}+z_{-10}+\alpha^2(z_{01}+z_{0-1})\right ] \\
 	-2\alpha^2\left [z_{11} + z_{1-1} + z_{-11} + z_{-1-1}\right ] - \left [z_{20} + z_{-20} + \alpha^4 (z_{02} + z_{0-2})\right ] \\
-	+ \left (\frac{T_I}{1-T_I} + 2(1+\alpha^2)\right )C_{00} \}.
+	+ \left (T_I/(1-T_I) + 2(1+\alpha^2)\right )C_{00} \}.
 \label{eq:offnode}
 \end{split}
 \end{equation}
