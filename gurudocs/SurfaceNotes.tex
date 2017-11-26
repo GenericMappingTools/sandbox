@@ -29,12 +29,12 @@ algorithm and proposed improvements.
 
 \PDFfig[h]{off_surface_nodes}{The four quadrants (1-4) where a data constraint (E) may be located.  The Briggs
 solution published in SW90 is defined for the first quadrant (pink) only.  Other quadrants must be rotated
-so that the point E falls into the first quadrant and A--D can be identified.  Black square is the central node (0,0).}{5in}
+so that point E falls into the first quadrant and A--D can be identified.  Black square is the central node (0,0).}{5in}
 
 Most data constraints are not likely to fall exactly (or even very close) to the
 desired output nodes so we must find a way to include them in the finite difference
 solution.  Figure~\ref{fig:off_surface_nodes} shows the four cases we must consider since
-a point may lie in any of the four quadrants surrounding the central node.
+a data constraint may lie in any of the four quadrants surrounding the central node.
 We follow Briggs [1974] in connecting the off-node point via a
 second-order Taylor expansion from the central node ($z_{00}$) to a nearby point $z_k$:
 \begin{equation}
@@ -43,12 +43,12 @@ second-order Taylor expansion from the central node ($z_{00}$) to a nearby point
 	+ \frac{1}{2}  \eta^2_k \frac{\partial^2 z}{\partial y^2}.
 \end{equation}
 Here, the coordinates of the off-node points ($\xi_k, \eta_k$) are defined on a normalized
-grid where the grid cell of dimension $\Delta x$ by $\Delta y$ equals the unit square, i.e.,
+grid where the original grid cell dimension $\Delta x$ by $\Delta y$ is mapped to a unit square, i.e.,
 \begin{equation}
-\xi_k = \frac{x_k-x_{00}}{\Delta x}, \quad \alpha \eta_k = \frac{y_k-y_{00}}{\Delta y} = \frac{y_k-y_{00}}{\Delta x},
+\xi_k = \frac{x_k-x_{00}}{\Delta x}, \quad \alpha \eta_k = \frac{y_k-y_{00}}{\Delta y} \mbox{ or } \eta_k = \frac{y_k-y_{00}}{\Delta x},
 \end{equation}
-where $\alpha = \Delta x/ \Delta y$ is the grid spacing anisotropy (i.e., the inverse of what was reported in SW90).
-The Briggs scheme is to evaluate this expansion to the five distinct points A--E, here identified as $(\xi_k, \eta_k), k = 1,5$.
+where $\alpha = \Delta x/ \Delta y$ is the grid spacing anisotropy (i.e., the inverse of what was stated in SW90).
+The Briggs scheme is to evaluate this expansion at the five distinct points A--E, here represented as $(\xi_k, \eta_k), k = 1,5$.
 We then multiply each expansion by a real number $b_k$ and sum the five expressions:
 \begin{equation}
 	\sum b_k z_k = z_{00}\sum b_k  + \sum b_k \xi_k \frac{\partial z}{\partial x} + \sum b_k \eta_k \frac{\partial z}{\partial x} \
@@ -74,11 +74,11 @@ we obtained these coordinates via
 	u_E = \frac{x_e - x_0}{\Delta x} = \xi_E, \quad v_E = \frac{y_e - y_0}{\Delta y} = \alpha \eta_E.
 \end{equation}
 The other four points required are
-nodes on the grid and these have relative, fractional $x$- and $y$-coordinates belonging to the set \{$-1, 0, +1$\},
+nodes on the grid and these have relative, fractional $u$- and $v$-coordinates belonging to the set \{$-1, 0, +1$\},
 depending on which node we consider. The five equations in (\ref{eq:define}) results in a 5x5 linear system $\mathbf{Mb} = \mathbf{r}$.
 The four nodes used in the construction for quadrant 1 are labeled \{NW, W1, S1, SE\}
 and reflect their positions relative to the central (0,0) node.
-The coordinates of these four points populate the first four columns in the matrix $\mathbf{M}$, while point E
+The relative coordinates of these four points populate the first four columns in the matrix $\mathbf{M}$, while point E
 contributes to the 5th column. Hence, the matrix equation
 for $b_k$ becomes
 \begin{equation}
@@ -104,7 +104,8 @@ for $b_k$ becomes
 \end{equation}
 \PDFfig[h]{off_surface_nodes_rot}{Rotating quadrants 2--4 yields cases that matches the first quadrant,
 allowing us to select which nodes play the roles of A-D and what the coordinates of E should be.}{5in}
-Given $u_E = \xi$ and $v_E = \alpha \eta$ this matrix equation is identical to what we published in SW90. 
+
+Given $u_E = \xi$ and $v_E = \alpha \eta$ this matrix equation is identical to SW90. 
 Introducing $\Delta = \left (u_E + v_E + 1 \right)\left (u_E + v_E\right)$ we find
 the solution using MATLAB's symbolic solver to be
 \begin{equation}
@@ -151,6 +152,8 @@ In SW90 we derived the solution for $\mathbf{b}$ as
 \end{equation}
 which includes a correction to $b_2$ due to a typesetting error.  When we insert an arbitrary first-quadrant
 $(u_E, v_E)$ position for any value of $\alpha$ into (\ref{eq:new}) and (\ref{eq:paper}) they give identical results.
-However, the original surface implementation does not honor the swapping of $u_E$ and $v_E$ for quadrants
-2 and 4.
+We will therefore continue to use the original solution as it is numerically faster.
+However, the original surface implementation does \emph{not} honor the swapping of $u_E$ and $v_E$ for quadrants
+2 and 4.  This means the current surface implementation introduces subtle distortions in the grid at about half
+the nodes with data constraints.
 \end{document}
