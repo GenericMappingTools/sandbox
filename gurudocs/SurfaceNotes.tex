@@ -4,13 +4,14 @@
 \documentclass[12pt,letterpaper,margin=0.5in]{article}
 \usepackage{times}
 \usepackage{epsfig}
+\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{breqn}
 \usepackage[margin=1in]{geometry}
 \newcommand{\PDFfig}[4][tbp]{\begin{figure}[#1] \centering \epsfig{figure=#2,width=#4} \caption{{\small #3}} \label{fig:#2} \end{figure}}
+\pagenumbering{arabic}
 
 \begin{document}
-
 \section{THE SURFACE ALGORITHM}
 
 Smith and Wessel [1990] (here SW90) presented an
@@ -156,4 +157,109 @@ We will therefore continue to use the original solution as it is numerically fas
 However, the original surface implementation does \emph{not} honor the swapping of $u_E$ and $v_E$ for quadrants
 2 and 4.  This means the current surface implementation introduces subtle distortions in the grid at about half
 the nodes with data constraints.
+
+\section{Determine $C_{00}$ using interpolating biquadratic}
+
+SW90 used a 2-D Taylor expansion from the center node to the off-node data constraint E
+and 4 other nodes in order to include data constraints into the finite difference solution.
+An alternative approach to incorporating off-node data constraints is fitting a biquadratic model
+\begin{equation}
+	z(u,v) = c_1 + c_2 u + c_3 v + c_4 u v + c_5 u^2 + c_6 v^2 + c_7 u^2v + c_8 v^2 u + c_9 u^2v^2
+	\label{eq:biquadratic}
+\end{equation}
+to the nearest 8 nodes plus the single data constraint in the vicinity of ($0,0$).  Using the nodes 
+\{NW, N1, NE, W1, E1, SW, S1, SE \} relative to the center node we obtain the following matrix equation
+for the 9 unknown coefficients $c_k$ defining the exact interpolation for quadrant 1:
+\begin{equation}
+\left[ {\begin{array}{*{20}{c}}
+1&{ - 1}&1&{ - 1}&1&1&1&{ - 1}&1\\
+1&0&1&0&0&1&0&0&0\\
+1&1&1&1&1&1&1&1&1\\
+1&{ - 1}&0&0&1&0&0&0&0\\
+1&1&0&0&1&0&0&0&0\\
+1&{ - 1}&{ - 1}&1&1&1&{ - 1}&{ - 1}&1\\
+1&0&{ - 1}&0&0&1&0&0&0\\
+1&1&{ - 1}&{ - 1}&1&1&{ - 1}&1&1\\
+1&u&v&{uv}&{{u^2}}&{{v^2}}&{{u^2}v}&{{v^2}u}&{{u^2}{v^2}}
+\end{array}} \right] \cdot \left[ {\begin{array}{*{20}{c}}
+{{c_1}}\\
+{{c_2}}\\
+{{c_3}}\\
+{{c_4}}\\
+{{c_5}}\\
+{{c_6}}\\
+{{c_7}}\\
+{{c_8}}\\
+{{c_9}}
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+{{z_1}}\\
+{{z_2}}\\
+{{z_3}}\\
+{{z_4}}\\
+{{z_5}}\\
+{{z_6}}\\
+{{z_7}}\\
+{{z_8}}\\
+w
+\end{array}} \right].
+\end{equation}
+Here, $z_1$ -- $z_8$ are the node values for the selected 8 grid nodes above;
+these all have relative $u$ and $v$ coordinates in the \{$-1, 0, +1$\} set.
+The single off-node data constraint is given by ($u,v,w$).  We only need
+(\ref{eq:biquadratic}) to evaluate $C_{00} = \nabla^2 z \rvert _{0, 0} = 2 \left(c_5 + c_6 \right)$
+as all other terms are zero at the origin.  This expression relates the curvature of the
+surface at the center node to our off-node data point.  Letting MATLAB do the algebra,
+we obtain
+\begin{equation}
+C_{00} = \frac{D}{(u^2-1)(v^2-1)}
+\label{eq:biquad}
+\end{equation}
+with
+\begin{equation}
+\begin{split}
+D = z_2 + z_4 + z_5 + z_7 - 4w - 2u z_4 + 2 u z_5 + 2 v z_2 - 2 v z_7 - u^2 z_2   \\
+    + u^2 z_4 + u^2 z_5 - u^2 z_7 + v^2 z_2 - v^2 z_4 - v^2 z_5 + v^2 z_7 - u v^2 z_1    \\
+    + u^2 v z_1 - 2 u^2 v z_2 + u v^2 z_3 + u^2 v z_3 + 2 u v^2 z_4 - 2 u v^2 z_5 - u v^2 z_6  \\
+    - u^2 v z_6 + 2 u^2 v z_7 + u v^2 z_8 - u^2 v z_8 + u^2 v^2 z_1 - u^2 v^2 z_2 + u^2 v^2 z_3   \\
+    - u^2 v^2 z_4 - u^2 v^2 z_5+ u^2 v^2 z_6 - u^2 v^2 z_7 + u^2 v^2 z_8 - u v z_1 + u v z_3 \\
+    + u v z_6 - u v z_8.
+\end{split}
+\end{equation}
+which we can reorganize to
+\begin{equation}
+\begin{split}
+D = (z_2 + z_4 + z_5 + z_7 - 4w)   \\
+	+ 2u (z_5 - z_4) + 2v (z_2 - z_7) + u v (z_3 + z_6 - z_1 - z_8) \\
+	- u^2 (z_4 + z_5 - z_2 - z_7) + v^2 (z_2 - z_4 - z_5 + z_7)    \\
+	+ u^2 v (z_1 - 2 z_2 + z_3 - z_6 + 2 z_7 - z_8) \\
+	- u v^2 (z_1 + z_3 + 2 z_4 - 2 z_5 - z_6 + z_8)  \\
+	+ u^2 v^2 (z_1 - z_2 + z_3 - z_4 - z_5 + z_6 - z_7 + z_8).
+\end{split}
+\end{equation}
+From SW90 we know the desired surface must satisfy
+\begin{equation}
+\left( 1 - T_I\right)\nabla^4 z - T_I \nabla^2 z = \left( 1 - T_I\right)\nabla^2 C - T_I \nabla^2 z = 0.
+\label{eq:biharm}
+\end{equation}
+We also derived
+\begin{equation}
+\nabla^2 C \rvert _{0, 0} = C_{10} + C_{-10} + \alpha^2(C_{01} + C_{0-1}) - 2 (1+\alpha^2)C_{00}.
+\label{eq:curv}
+\end{equation}
+and
+\begin{equation}
+C_{00} = \nabla^2 z \rvert _{0, 0} = z_{10} + z_{-10} + \alpha^2(z_{01} + z_{0-1}) - 2 (1+\alpha^2)z_{00}.
+\end{equation}
+We will insert (\ref{eq:curv}) into (\ref{eq:biharm}) and replace $C_{00}$ with the value obtained from (\ref{eq:biquad}), then algebraically solve for $z_{00}$.
+This gives
+\begin{equation}
+\begin{split}
+z_{00} = \frac{1}{2(1+\alpha^4)} \{ 2(1+\alpha^2) \left [ z_{10}+z_{-10}+\alpha^2(z_{01}+z_{0-1})\right ] \\
+	-2\alpha^2\left [z_{11} + z_{1-1} + z_{-11} + z_{-1-1}\right ] - \left [z_{20} + z_{-20} + \alpha^4 (z_{02} + z_{0-2})\right ] \\
+	+ \left (\frac{T_I}{1-T_I} + 2(1+\alpha^2)\right )C_{00} \}.
+\label{eq:offnode}
+\end{split}
+\end{equation}
+Thus, we will use (\ref{eq:offnode}) instead of (A-7) when updating nodes with nearby data constraints.
+
 \end{document}

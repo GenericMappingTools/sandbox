@@ -1,8 +1,15 @@
-% New approach: Fit a 9-term polynomial to the
+% Possibly new approach in surface:
+% Fit a 9-term polynomial to the
 % 8 nodes surrounding our central node PLUS the
-% data constraint.
+% data constraint (u,v,w):
+%
+% z(u,v) = c1 + c2*u + c3*v + c4*u*v + c5*u^2 + c6*v^2 + c7*u^2*v + c8*v^2*u + c9*u^2*v^2
+%
+% What we really want is the Lapacian of z for u = v = 0 which is
+% C(0,0) = 2*(c5 + c6)
+% so we let Matlab solve for this expression
 
-syms x y z1 z2 z3 z4 z5 z6 z7 z8 u;
+syms u v z1 z2 z3 z4 z5 z6 z7 z8 w;
 
 A = [1 -1  1 -1  1  1  1 -1  1
      1  0  1  0  0  1  0  0  0
@@ -12,16 +19,17 @@ A = [1 -1  1 -1  1  1  1 -1  1
      1 -1 -1  1  1  1 -1 -1  1
      1  0 -1  0  0  1  0  0  0
      1  1 -1 -1  1  1 -1  1  1
-     1  x  y x*y x^2 y^2 x^2*y y^2*x x^2*y^2 ];
-r = [z1; z2; z3; z4; z5; z6; z7; z8; u];
+     1  u  v u*v u^2 v^2 u^2*v v^2*u u^2*v^2 ];
+r = [z1; z2; z3; z4; z5; z6; z7; z8; w];
 c = A \ r
-C = simplify(c(5) + c(6))
+curv = 2*(c(5) + c(6))
+C = simplify(curv)
 % This gives
-%C = (z2 + z4 + z5 + z7 - 4*u - 2*x*z4 + 2*x*z5 + 2*y*z2 - 2*y*z7 - x^2*z2 
-%    + x^2*z4 + x^2*z5 - x^2*z7 + y^2*z2 - y^2*z4 - y^2*z5 + y^2*z7 
-%    - x*y^2*z1 + x^2*y*z1 - 2*x^2*y*z2 + x*y^2*z3 + x^2*y*z3 + 2*x*y^2*z4 
-%    - 2*x*y^2*z5 - x*y^2*z6 - x^2*y*z6 + 2*x^2*y*z7 + x*y^2*z8 - x^2*y*z8 
-%    + x^2*y^2*z1 - x^2*y^2*z2 + x^2*y^2*z3 - x^2*y^2*z4 - x^2*y^2*z5 
-%    + x^2*y^2*z6 - x^2*y^2*z7 + x^2*y^2*z8 - x*y*z1 + x*y*z3 + x*y*z6 
-%    - x*y*z8)/(2*(x^2 - 1)*(y^2 - 1))
+%C = (z2 + z4 + z5 + z7 - 4*w - 2*u*z4 + 2*u*z5 + 2*v*z2 - 2*v*z7 - u^2*z2 
+%    + u^2*z4 + u^2*z5 - u^2*z7 + v^2*z2 - v^2*z4 - v^2*z5 + v^2*z7 
+%    - u*v^2*z1 + u^2*v*z1 - 2*u^2*v*z2 + u*v^2*z3 + u^2*v*z3 + 2*u*v^2*z4 
+%    - 2*u*v^2*z5 - u*v^2*z6 - u^2*v*z6 + 2*u^2*v*z7 + u*v^2*z8 - u^2*v*z8 
+%    + u^2*v^2*z1 - u^2*v^2*z2 + u^2*v^2*z3 - u^2*v^2*z4 - u^2*v^2*z5 
+%    + u^2*v^2*z6 - u^2*v^2*z7 + u^2*v^2*z8 - u*v*z1 + u*v*z3 + u*v*z6 
+%    - u*v*z8)/(2*(u^2 - 1)*(v^2 - 1))
 
