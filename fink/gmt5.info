@@ -98,5 +98,5 @@ DescDetail: <<
 <<
 License: GPL, Restrictive/Distributable
 DocFiles: COPYING.LESSERv3 COPYINGv3 LICENSE.TXT README src/README.TRIANGLE src/TRIANGLE.HOWTO
-Maintainer: Kurt Schwehr <goatbar@users.sourceforge.net>
+Maintainer: Remko Scharroo <remkos@users.sourceforge.net>
 Homepage: http://gmt.soest.hawaii.edu/
