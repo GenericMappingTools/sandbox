@@ -1,0 +1,65 @@
+%	$Id$
+% Internal documentation for blockmean
+% Paul Wessel, May 23, 2018.
+\documentclass[12pt,letterpaper,margin=0.5in]{report}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{breqn}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{lscape}
+\textheight = 9 in
+\topmargin = -1 in
+\begin{document}
+
+\section*{BLOCKMEAN}
+
+Way back in 1987 or so, we built the blockm* modules as pre-processors to gridding routines as a way to avoid spatial aliasing
+and possibly remove outliners.  However, these modules can also be considered standalone tools for various
+statistical operations on points within spatial bins.  This dual use has lead to some issues that need to
+be discussed and the result need better documentation.  We may also need to provide new options or modifiers
+to allow the full range of possible outputs while retaining backwards compatibility.
+
+\subsection*{Weights}
+As originally implemented, blockmean expected $(x_i,y_i,z_i)$ triplets and returned ($\bar{x}, \bar{y}, \bar{z}$)
+per bin with data.
+However, if the {\bf --W} option is used then we expect $(x_i,y_i,z_i,w_i)$ records instead and compute the weighted means
+using the relation
+\begin{equation}
+	\bar{\phi} = \frac{\sum_i^n \phi_i w_i}{\sum_i^n w_i} = \frac{\sum_i^n \phi_i w_i}{S_w},
+\end{equation}
+where $\phi$ is the variable we want to average.
+In the latter case we also output the sum of the weights, $S_w$, unless it is suppressed by using {\bf--Wi}.  The idea
+behind outputting the sum of the weights was to facilitate grand means at a later stage by combining several
+intermediate results.
+
+\subsection*{Uncertainties}
+
+At some point we started to allow input of the form  $(x_i,y_i,z_i,\sigma_i)$ via the {\bf +s} modifier to {\bf--W}. Now,
+the given data uncertainties are converted to weights via $w_i = 1/\sigma_i$ and weighted means are computed
+as above.  However, the output weights are now reported as $1/S_w$.  It is not clear how useful this is.
+
+\subsection*{Extended output}
+
+We also added an option {\bf --E} for extended output.  In addition to the mean triplet reported above, we append
+the values $s, l, h$, where $s$ is the (weighted) standard deviation of the points inside a bin, and $l$ and
+$h$ are the lowest and highest values encountered in that bin.
+
+\subsection*{Error propagation}
+
+In 2013, John Helly (?) wanted us to extend blockmean to do error propagation on the mean.  We implemented
+this via {\bf --Ep} which implied three things:
+\begin{itemize}
+	\item It requires that the input weight option ({\bf --W} or {\bf --Wi}) be selected.
+	\item It requires the input uncertainties $\sigma_i$ to be passed as weights $w_i$ externally computed as $\sigma_i^{-2}$.
+		This seems an odd choice instead of having blockmean accept $\sigma_i$ and do that conversion internally.
+	\item The output $s$ value is now the standard deviation of the propagated error on the mean.  However, the
+		implementation uses the equation ... whereas per Wikipedia it should be ...
+\end{itemize}
+Finally, there is no check if {\bf --Ep} and {\bf --W+s} is given and what that would mean.
+
+\subsection*{Proposed Modifications}
+
+
+\section*{REFERENCES}
+
+\end{document}
