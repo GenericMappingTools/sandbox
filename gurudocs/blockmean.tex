@@ -39,7 +39,7 @@ Weights or not, ($\bar{x}, \bar{y}$) can be replaced by the coordinates of the b
 
 At some point we started to allow input of the form  $(x_i,y_i,z_i,\sigma_i)$ via the {\bf +s} modifier to {\bf--W}. Now,
 the given data uncertainties are converted to weights via $w_i = 1/\sigma_i$ and weighted means are computed
-as per (\ref{eq:weighted}).  However, the last squares solution for the weighted mean actually requires $w_i = 1/\sigma_i^2$
+as per (\ref{eq:weighted}).  However, the least squares solution for the weighted mean actually requires $w_i = 1/\sigma_i^2$
 ({\bf ISSUE 1}). Since $\sigma_i$ has the same units as $z_i$ it no longer makes sense to use these weights
 for computing ($\bar{x}, \bar{y}$), but we do not explicitly prevent it; I think we should ({\bf ISSUE 2}).
 Finally, the output weights are now reported as $1/S_w$.  It is not clear how useful this is ({\bf ISSUE 3}).
@@ -90,12 +90,14 @@ Hence, the uncertainty in the weighted mean should instead be reported as
 We propose to address the six issues thus:
 \begin{enumerate}
 	\item When data uncertainties are given ({\bf --W+s}), compute weights as $w_i = 1/\sigma_i^2$.
-	\item Only compute weighted ($\bar{x}, \bar{y}$) when weights are given, not data uncertainties. Document this behavior.
-	\item Always output the weight sum if output weights are requested, regardless of the origin of the weights.
-	\item For error propagation ({\bf --Ep}), allow {\bf --W+s} and therefore expect $\sigma_i$ on input, otherwise use the weights as is.
+	\item Only compute weighted ($\bar{x}, \bar{y}$) when weights are given, and simple means when data uncertainties are given.
+	\item Always output the \emph{weight sum} if output weights are requested.
+	\item This issue is technically not a bug, but it is unusual since it clearly involves data uncertainties but expects to be
+		given weights computed according to a specific recipe ($w_i = 1/\sigma_i^2$).  To remain fully backwards compatible I
+		suggest we introduce {\bf --E+p} to capture the new behavior and stop document (but keep the code for) the old {\bf --Ep}.
+		New {\bf --E+p} should handle weights [{\bf --W}] or uncertainties (via {\bf --W+s}).
 	\item For error propagation ({\bf --Ep}), use (\ref{eq:s}) for the propagated uncertainty on weighted means.
-	\item Clarify that {\bf --Ep} implies {\bf --W+s} and give errors if just {\bf --W} is given or if not enough columns are present.
+	\item This becomes a compatibility issue under the hood for {\bf --Ep}.  Basically, {\bf --Ep} requires {\bf --W} and should give
+		an error (with explanation) if given {\bf --W+s}.
 \end{enumerate}
-Issue \#4 is technically not a bug but is unusual since it clearly discusses data uncertainties but expects weights in a specific way.  To remain fully backwards
-compatible I suggest we introduce  {\bf --E+p} to capture the new behavior and stop document (but keep the code for) the old {\bf --Ep}. New {\bf --E+p} should handle weights [Default] or uncertainties (via {\bf --W+s}).
 \end{document}
