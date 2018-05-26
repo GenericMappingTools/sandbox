@@ -13,13 +13,13 @@
 
 \section*{BLOCKMEAN}
 
-Way back in 1987 or so, we built the blockm* modules as pre-processors to gridding routines as a way to avoid spatial aliasing
-and possibly remove outliners.  However, these modules can also be considered standalone tools for various
-statistical operations on points within spatial bins.  This dual use has lead to some issues that need to
-be discussed and the result need better documentation.  We may also need to provide new options or modifiers
+Way back in 1987 or so, Walter built the blockm* modules as pre-processors to gridding routines as a way to avoid spatial aliasing
+and possibly remove outliers.  However, these modules can also be considered standalone tools for various
+statistical operations on points within spatial bins.  This dual use has lead to some issues for blockmean that need to
+be discussed and the outputs need better documentation.  We may also need to provide new options or modifiers
 to allow the full range of possible outputs while retaining backwards compatibility.
 
-\subsection*{Weights}
+\subsection*{1. Weights}
 As originally implemented, blockmean expected $(x_i,y_i,z_i)$ triplets and returned ($\bar{x}, \bar{y}, \bar{z}$)
 per bin containing data.
 However, if the {\bf --W} option is used then we expect $(x_i,y_i,z_i,w_i)$ records instead and compute the weighted means
@@ -28,64 +28,74 @@ using the relation
 	\bar{\phi} = \frac{\sum_i^n \phi_i w_i}{\sum_i^n w_i} = \frac{\sum_i^n \phi_i w_i}{S_w},
 	\label{eq:weighted}
 \end{equation}
-where $\phi$ is the variable we want to average.  That is, the weights are applied when computing any of  ($\bar{x}, \bar{y}, \bar{z}$)
-provided {\bf --C} is not used to center the output location at the middle of the bin.
-In the latter case we also output the sum of the weights, $S_w$, unless it is suppressed by using {\bf--Wi}.  The idea
+where $\phi$ is the variable we want to average.  That is, the weights are applied when computing any of  ($\bar{x}, \bar{y}, \bar{z}$).
+We also output the sum of the weights, $S_w$, unless it is suppressed by using {\bf--Wi}.  The idea
 behind outputting the \emph{sum of the weights} was to facilitate grand means at a later stage by combining several
 intermediate results via a second run of blockmean.  Here, the weight sums would be used as input weights in the second
 run and hence the sum rather than a mean weight is required.
+Weights or not, ($\bar{x}, \bar{y}$) can be replaced by the coordinates of the bin center if {\bf --C} is set.
 
-\subsection*{Uncertainties}
+\subsection*{2. Uncertainties}
 
 At some point we started to allow input of the form  $(x_i,y_i,z_i,\sigma_i)$ via the {\bf +s} modifier to {\bf--W}. Now,
 the given data uncertainties are converted to weights via $w_i = 1/\sigma_i$ and weighted means are computed
-as per (\ref{eq:weighted}).  Since $\sigma_i$ has the same units as $z_i$ it no longer makes sense to use these weights
-for computing ($\bar{x}, \bar{y}$).  Futhermore, the output weights are now reported as $1/S_w$, which is possibly a bug.
-Given these weights, the weighted mean for the data values is computed as
+as per (\ref{eq:weighted}).  However, the last squares solution for the weighted mean actually requires $w_i = 1/\sigma_i^2$
+({\bf ISSUE 1}). Since $\sigma_i$ has the same units as $z_i$ it no longer makes sense to use these weights
+for computing ($\bar{x}, \bar{y}$), but we do not explicitly prevent it; I think we should ({\bf ISSUE 2}).
+Finally, the output weights are now reported as $1/S_w$.  It is not clear how useful this is ({\bf ISSUE 3}).
+Given those weights, the weighted mean for the data values should be computed via (\ref{eq:weighted}) as
 \begin{equation}
-	\bar{z} = \frac{\sum_i^n z_i \sigma_i^{-1}}{\sum_i^n \sigma_i^{-1}} = \sum_i^n z_i \alpha_i,
+	\bar{z} = \frac{\sum_i^n z_i \sigma_i^{-2}}{\sum_i^n \sigma_i^{-2}} = \sum_i^n z_i \alpha_i,
 	\label{eq:w}
 \end{equation}
 where
 \begin{equation}
-	\alpha_i = \frac{ \sigma_i^{-1}}{\sum_i^n \sigma_i^{-1}} = \frac{1}{\sigma_i S_w}.
+	\alpha_i = \frac{ \sigma_i^{-2}}{\sum_i^n \sigma_i^{-2}} = \frac{1}{\sigma_i^2 S_w}.
 	\label{eq:a}
 \end{equation}
 
 
-\subsection*{Extended output}
+\subsection*{3. Extended Output}
 
-We also added an option {\bf --E} for extended output.  In addition to the mean triplet reported above, we append
-the values $s, l, h$, where $s$ is the (weighted) standard deviation of the points inside a bin, and $l$ and
+We also added an option {\bf --E} for \emph{extended output}.  In addition to the mean triplet reported above, we append
+the values $s, l, h$, where $s$ is the [weighted] sample standard deviation of the points inside a bin, and $l$ and
 $h$ are the lowest and highest values encountered in that bin.
 
-\subsection*{Error propagation}
+\subsection*{4. Error Propagation}
 
 In 2013, John Robbins (Feature request \#217) wanted us to extend blockmean to do error propagation on the mean.  We implemented
-this via {\bf --Ep} which implied three things:
+this via {\bf --Ep}, which implied three additional conditions:
 \begin{itemize}
-	\item It requires that the input weight option ({\bf --W} or {\bf --Wi}) be selected.
-	\item It requires the input uncertainties $\sigma_i$ to be passed as weights $w_i$ externally computed as $\sigma_i^{-2}$.
-		This seems an odd choice instead of having blockmean accept $\sigma_i$ and do that conversion internally.
-	\item The output $s$ value is now the standard deviation of the propagated error on the mean.  However, the
-		implementation uses the equation $\sqrt{\sum \sigma_i^2}/n$, which seems wrong?
+	\item It requires the input weight option ({\bf --W} or {\bf --Wi}) to be selected.
+	\item Awkwardly, it requires the input uncertainties $\sigma_i$ to be passed as weights $w_i$ (but externally computed as $\sigma_i^{-2}$).
+		This seems an odd choice instead of letting blockmean accept $\sigma_i$ (as above) and do that conversion internally via {\bf --W+s} ({\bf ISSUE 4}).
+	\item The output $s$ value is now the propagated uncertainty on the mean.  However, the current implementation (following Robbins)
+		uses the equation $\sqrt{\sum \sigma_i^2}/n$, which is the equation for the simple mean but not the \emph{weighted} mean ({\bf ISSUE 5}).
 \end{itemize}
-We note there is no check if {\bf --Ep} and {\bf --W+s} is given and what that would mean for the calculations.
+We note there is no documentation if both {\bf --Ep} and {\bf --W+s} are given and what that would mean for the calculations ({\bf ISSUE 6}).
 
-Given (\ref{eq:w}) and (\ref{eq:a}) we assume independent errors and obtain the uncertainty in $\bar{z}$ due to the individual uncertainties:
+Given (\ref{eq:w}) and (\ref{eq:a}) we assume independent errors and obtain the uncertainty in the weighted $\bar{z}$ due to the individual uncertainties as
 \begin{equation}
-	\sigma_{\bar{z}}^2 = \sum_i^n \left (\alpha_i \sigma_i \right )^2 = \sum_i^n \left (\frac{1}{\sigma_i S_w} \sigma_i \right )^2 = \sum_i^n S_w^{-2} = nS_w^{-2}.
+	\sigma_{\bar{z}}^2 = \sum_i^n \left (\alpha_i \sigma_i \right )^2 = \sum_i^n \left (\frac{1}{\sigma_i^2 S_w} \sigma_i \right )^2 = \sum_i^n \frac{1}{\sigma_i^2 S_w^2} = \frac{1}{S_w}.
 	\label{eq:v}
 \end{equation}
-Hence the standard deviation in the weighted mean should instead be reported as
+Hence, the uncertainty in the weighted mean should instead be reported as
 \begin{equation}
-	\sigma_{\bar{z}} = \frac{\sqrt{n}}{S_w}.
+	\sigma_{\bar{z}} = \frac{1}{\sqrt{S_w}}.
 	\label{eq:s}
 \end{equation}
 
-\subsection*{Proposed Modifications}
+\subsection*{5. Proposed Modifications}
 
-
-\section*{REFERENCES}
-
+We propose to address the six issues thus:
+\begin{enumerate}
+	\item When data uncertainties are given ({\bf --W+s}), compute weights as $w_i = 1/\sigma_i^2$.
+	\item Only compute weighted ($\bar{x}, \bar{y}$) when weights are given, not data uncertainties. Document this behavior.
+	\item Always output the weight sum if output weights are requested, regardless of the origin of the weights.
+	\item For error propagation ({\bf --Ep}), allow {\bf --W+s} and therefore expect $\sigma_i$ on input, otherwise use the weights as is.
+	\item For error propagation ({\bf --Ep}), use (\ref{eq:s}) for the propagated uncertainty on weighted means.
+	\item Clarify that {\bf --Ep} implies {\bf --W+s} and give errors if just {\bf --W} is given or if not enough columns are present.
+\end{enumerate}
+Issue \#4 is technically not a bug but is unusual since it clearly discusses data uncertainties but expects weights in a specific way.  To remain fully backwards
+compatible I suggest we introduce  {\bf --E+p} to capture the new behavior and stop document (but keep the code for) the old {\bf --Ep}. New {\bf --E+p} should handle weights [Default] or uncertainties (via {\bf --W+s}).
 \end{document}
