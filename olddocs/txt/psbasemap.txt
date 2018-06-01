@@ -148,11 +148,11 @@ basemap for Indo-China can be plotted as
 psbasemap -R95/5/108/20r -Ju46/1:10000000 -B3g3:.UTM: > utm.ps
 .SS Cylindrical Equal-Area
 First select which of the cylindrical equal-area projections you want by deciding on the standard parallel.
-Here we will use 45 degrees which gives the Gall-Peters projection.  A LEN_Y inch wide global basemap centered on the Pacific
+Here we will use 45 degrees which gives the Gall projection.  A LEN_Y inch wide global basemap centered on the Pacific
 is made by
 .br
 .sp
-psbasemap -Rg SCALE_Y -B30g30:.Gall-Peters: > gall-peters.ps
+psbasemap -Rg SCALE_Y -B30g30:.Gall: > gall.ps
 .SH CONIC MAP PROJECTIONS
 .SS Albers [equal-area]
 A basemap for middle Europe may be created by

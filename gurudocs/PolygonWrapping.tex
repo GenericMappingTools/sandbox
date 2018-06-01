@@ -14,8 +14,8 @@
 \begin{document}
 \section{WRAPPED POLYGON FILL}
 
-In GMT, polygons are plotted using modules \texttt{psxy} and \texttt{psxyz}, and indirectly by \texttt{pscoast}.
-The latter is different and does not plot large geographic polygons directly.  Instead, they have been drawn and
+In GMT, user-provided polygons are plotted using modules \texttt{psxy} and \texttt{psxyz}, while landmass polygons are indirectly plotted by \texttt{pscoast}.
+The latter is different and does not plot large geographic polygons directly.  Instead, polygons in a global database (GSHHG) have been drawn and
 quartered earlier and the final polygon is reassembled as a series of tiles that combine to yield a filled large
 polygon.  Any outline can then be drawn separately since we do not wish to draw outlines for individual tiles as
 this would include interior tile boundaries.  However, \texttt{psxy} and \texttt{psxyz} may be given large geographical
@@ -28,7 +28,7 @@ at the other side, typically resulting in two parts of a polygon where only one 
 GMT currently handles large geographic polygons that may exit and reenter at periodic boundaries by a series of steps:
 \begin{enumerate}
 	\item Project the $(\lambda, \phi)$ coordinates to plot $(x,y)$ inches on a map.
-	\item Determine when the $(x,y)$ line crosses the periodic map boundary and insert a new point at the crossing at both the exit
+	\item Determine if the $(x,y)$ line crosses the periodic map boundary and insert a new point at the crossing at both the exit
 		and reentry locations. These points have the same $y$ coordinate but differ in their $x$ values by the
 		\emph{width} of the map at that latitude.
 	\item Detect these horizontal jumps across the map and flag them with ``pen up'' instructions (we use 1 for move, 0 for draw)
@@ -41,18 +41,18 @@ GMT currently handles large geographic polygons that may exit and reenter at per
 		In fact, the GMT algorithm does this three times to cover some complicated cases no longer documented.
 	\item If an outline is desired then this is drawn separately at the end using the pen up/down information discussed earlier.
 \end{enumerate}
-This algorithm is complicated, not documented to be understandabe, and remains error-prone, as numerous bug reports from EarthByte
+This algorithm is complicated, not documented to be understandable, and remains error-prone, as numerous bug reports from EarthByte
 can testify to (they end up with landmasses that have been reconstructed back in time and these reconstructed polygons provide many test
 cases that at times are challenging to plot correctly when filled).  We especially find polygons that are rotated to become \emph{polar caps},
-i.e., then end up enclosing one of the geographic poles, leading to additional challenges.
+i.e., they end up enclosing one of the geographic poles, leading to additional challenges.
 
 \section{PROPOSED SIMPLER ALGORITHM}
 We are considering simplifications that will make the algorithm simpler and easier to understand (and hopefully foolproof).
-\subsection{Vertical periodic boundaries}
+\subsection{Global Map: Vertical periodic boundaries}
 
-\PDFfig[h]{pwrap_JM_1}{A large polygon that straddles Greenwhich.  Mercator projection.}{5in}
-A test polygon that crosses back and forth over Greenwhich is shown in Figure~\ref{fig:pwrap_JM_1}.  With Greenwhich as the central meridian we have a simple
-polygon to fill.  However, if we shift the central meridian to 180 then the same polygon still crosses Greenwhich which
+\PDFfig[h]{pwrap_JM_1}{A large polygon that straddles Greenwich.  Mercator projection.}{5in}
+A test polygon that crosses back and forth over Greenwich is shown in Figure~\ref{fig:pwrap_JM_1}.  With Greenwich as the central meridian we have a simple
+polygon to fill.  However, if we shift the central meridian to 180 then the same polygon still crosses Greenwich which
 now appears as our periodic east and west map boundaries. Simply projecting the coordinates and connecting the dots yields a wrapped polygon
 with nasty horizontal jumps back and forth across the map
 (Figure~\ref{fig:pwrap_JM_2}).  The proposed new algorithm would simply use the information of jumps and add or
@@ -60,19 +60,19 @@ subtract the map width to the $x$ coordinates until we again reenter the border.
 boundaries we obtain two polygons that both are partly inside the (projected) map area (Figure~\ref{fig:pwrap_JM_3}).
 However, since we always turn on \emph{map clipping} using the boundaries of the map then we can fill these polygons and
 only the parts that are inside the map region will be visible (Figure~\ref{fig:pwrap_JM_4}). We note that in the case of straight map
-boundaries the map width $W$ is constant across all latitudes and the two polygons in Figure~\ref{fig:pwrap_JM_3} are identical
-except for a translation of $W$.  Thus, in this case we could simply write the $(x,y)$ coordinates once as a named \emph{PostScript} array,
-plot it once, translate over by the map width, and plot the same array again.
+boundaries the map width $W_{360}$ is constant across all latitudes and the two polygons in Figure~\ref{fig:pwrap_JM_3} are identical
+except for a translation of $W_{360}$.  Thus, in this case we could simply write the $(x,y)$ coordinates once as a named \emph{PostScript} array,
+plot it once, translate the origin by $W_{360}$, and plot the same array again.
 \PDFfig[h]{pwrap_JM_2}{Same polygon naively drawn for a central meridian 180 degrees away.  Individual points are shown
 with a red dots while a thin line connects the dots as given.  Mercator projection.}{5in}
 \PDFfig[h]{pwrap_JM_3}{The projected polygon wrapped to left and right to avoid jumps, thus exceeding the map domain.  Mercator projection.}{5in}
 \PDFfig[h]{pwrap_JM_4}{The same polygons being filled, subject to map region clipping.  Mercator projection.}{5in}
 
-\subsection{Curved periodic boundaries}
+\subsection{Global Map: Curved periodic boundaries}
 
-\PDFfig[h]{pwrap_JH_1}{A large polygon that straddles Greenwhich.  Hammer projection.}{5in}
+\PDFfig[h]{pwrap_JH_1}{A large polygon that straddles Greenwich.  Hammer projection.}{5in}
 For many other map projections the periodic boundaries will not be straight (they are ellipses or more complicated curves).  In this case the
-map width is a \emph{function} of latitude or, equivalently, the projected $y$ coordinate.  The same polygon we used before is now plotted
+map width is a \emph{function} of latitude or, equivalently, the projected $y$ coordinate, i.e., $W_{360}(y)$.  The same polygon we used before is now plotted
 using the Hammer projection in Figure~\ref{fig:pwrap_JH_1}.  We follow exactly the same steps as used for the Mercator projection,
 with the exception that the map width we add or subtract is dependent on the $y$ value at the jump. Figures~\ref{fig:pwrap_JM_2},
 \ref{fig:pwrap_JM_3}, and \ref{fig:pwrap_JM_4} show the comparable results.  As can be seen, this algorithm is general and works
@@ -92,5 +92,36 @@ The holes must always be present so that the``even/odd-clip'' algorithm can dete
 Polar caps are by definition crossing a periodic boundary since they have a 360-degree range in longitudes.  Such polygons are the
 bane of most GIS software (such as arcGIS or Google Earth) since they fail to give a filled polygon.  Instead, the polygon must be split into
 ``east'' and ``west'' polygons so that their fill algorithm works.  GMT hides this complexity under the hood and does not require the users to
-split their polygons manually.  When a polar cap is detected for a projection with periodic boundaries then another algorithm is applied.
+split their polygons manually.  When a polar cap is detected for a projection with periodic boundaries then another algorithm is applied.  Here,
+we must stitch in part of the map boundary, which may be curved or straight, in order to create a fillable polygon.  A simpler mechanism is proposed here:
+Given the $(x,y)$ and pen array, create the fillable polygon by following the line, and when exiting the map border we append another point with
+the same $x$ value and a $y$-value that is either 0 (for south polar caps) or $H$ (the map height, for north polar caps). When we reenter on the
+other side we \emph{prepend} a similar point, and continue appending the actual points of the line.  Given map clipping is in effect the extrusions
+toward the top of bottom of the map will be clipped at the boundary.
+
+\subsection{Oblique domains or less than 360-degree longitudinal extent}
+GMT can specify regions using the lower left and upper right corners of a rectangle, thus yielding a rectangular map region despite these
+borders no longer represent meridians and parallels.  Likewise, users may specify a subset of longitudes (and latitudes) so that there are
+no periodic borders visible on the map.  In this case the map may be rectangular or have curved borders.  Nevertheless, any polygon that
+may cross such invisible borders (i.e., they would often be outside the frame)
+will still lead to jumps and should receive exactly the same treatment as the global maps, with one revision:  As the jumps will occur when we
+pass 180 degrees from the central meridian and jump to the other side of the map, that jump is no longer equal to the actual map width $W(y)$ but is given by the
+\emph{equivalent map width} we would have if the full global region had been specified.  Hence, the algorithm will still check for jumps and if detected we follow
+the above algorithm but using $W_{360}(y)$ instead of $W(y)$.  The limited map region clipping path will restrict plotting to its domain anyway.
+If is likely that for many such domains one of the translated polygons may be entirely outside the map domain, in which case we do not even need to
+plot it.  I note that we currently have a hard time with plotting polygons with large longitudinal extent on a relative small map region because the
+polygon part far outside the map region, when projected, will wrap to the other side and result in horizontal lines on the map.
+
+\section{SUMMARY}
+
+I propose the following outline for a new \texttt{gmt\_plot_polygons} function:
+\begin{itemize}
+	\item If Cartesian data then simply convert to map $(x,y)$ and pass to \texttt{PSL\_plotpolygon} directly.
+	\item No longer clip the polygon coordinates to the (complex) map border.  Instead,
+	 just call \texttt{gmt\_geo\_to\_xy\_line} which returns the $(x,y,p)$ arrays, with
+	$p$ the pen up/down codes.  The length of these arrays may be longer than the input
+	$(\lambda, \phi)$ array by virtue of added wrap points. It is this array (and pen code)
+	that we (successfully) use to draw the outline of any polygon (clipped or not).
+	\item Determine if polygon is wrapping or not.  If not wrapping the fill and outline as requested.
+	\item We have a wrapping polygon.
 \end{document}

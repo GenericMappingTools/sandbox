@@ -102,7 +102,7 @@ The standard parallel is typically one of these (but can be any value):
 .RS
 50 - Balthasart
 .br
-45 - Gall-Peters
+45 - Gall
 .br
 37.0666 - Caster
 .br
