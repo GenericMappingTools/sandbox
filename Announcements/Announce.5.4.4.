@@ -1,0 +1,20 @@
+0--------1---------2---------3---------4---------5---------6---------7
+Dear GMT user-
+
+We are pleased to announce two new updates for GMT:
+
+  * GMT 5.4.4  - The latest GMT 5 with bug fixes since 5.4.3
+  * GMT 4.5.18 - The final GMT 4 release with bug fixes since 4.5.17
+
+These two updates were released on July 1, 2018.
+At the same time, the DCW database was updated to 1.1.4.
+
+Note to GMT 4 users: This is the final release of the GMT 4 series,
+about 4 years and 8 months after the introduction of GMT 5.  We
+are now working only on GMT 6 and its python wrapper, with
+anticipated release at the end of this year. Until that time we
+will continue to release bug-fix updates to the GMT 5.x series.
+
+Sincerely,
+
+The GMT Team
