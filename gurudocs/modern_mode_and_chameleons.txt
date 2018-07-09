@@ -1,0 +1,61 @@
+Under modern mode we want all modules to only produce ONE kind of PRIMARY output.
+This means we need to split some classic functionality across existing and new
+modules to preserve the same overall option registry.  First, let us assess the
+extent of the problem.  These modules normally write PostScript, with exceptions:
+
+grdcontour.c		With -D write data table
+grdimage.c		With -A write image
+psbasemap.c		With -A, write bounding box table
+pscoast.c		With -M, -E, write data to stdout
+pscontour.c		With -D write data table
+pshistogram.c		With -I, write histogram data to stdout
+psmask.c		With -D write clip paths to data tables
+pssolar.c		With -I or -M writes data to stdout
+psternary.c		With -M writes ternary data to stdout
+
+These 4 can write tables or grids:
+
+blockm*.c		Writes data tables but with -A -G writes grids
+earthtide.c		Writes data tables but with -C -G writes grids
+
+Here are proposed new modules that allow the 2nd type of output:
+
+gmtcontour.c		Write contours from -Ggrids or tables
+gmtcoast.c		Write borders etc.
+gmtinsert.c		Write insert coordinates
+gmthistogram.c		Write histogram counts
+gmtmask.c		Write clip paths
+gmtsolar.c		Write terminators
+grdblockave.c		Write grids, with option to select which operator
+gmtternary.c		Write ternary data
+grdearthtide.c		Write solid earth tides
+
+For grdimage it seems we could do something slightly different. Maybe think of -A
+as a secondary output and turn off primary output?
+
+Details of wrappers:
+
+gmtcontour.c [-Ggrid] <options>
+	If -G is given then setup call to grdcontour -D, else call to pscontour -D
+
+gmtcoast.c -M -E will call pscoast with those options
+
+gmtinsert.c will call psbasemap -A
+
+gmthistogram.c will call pshistogram -I
+
+gmtmask.c will call psmask -D
+
+gmtsolar.c will call pssolar -I or -M
+
+grdblockave.c will call blockm* -G -A
+
+gmtternary.c will call psternary -M
+
+grdearthtide.c will call earthtide -G -A
+
+
+Furthermore, under modern mode the original modules will loose the options that are moved
+to the new wrappers. E.g., grdcontour under modern mode will not expose the -D option,
+while pscoast will not expose the -M and -E options for dumping.
+
