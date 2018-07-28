@@ -28,6 +28,9 @@ tokyo|perceptually uniform colormap without black or white, by Fabio Crameri [C=
 turku|a perceptually uniform colormap by Fabio Crameri [C=RGB]
 vik|perceptually uniform bimodal colormap, light, by Fabio Crameri [H=0,C=RGB]
 EOF
+cat << EOF > cpt.info
+hawaii|perceptually uniform lush colormap by Fabio Crameri [C=RGB]
+EOF
 rm -rf gmt
 mkdir gmt
 while read line; do
@@ -43,6 +46,7 @@ while read line; do
 	#
 	# License: Creative Commons Attribution 4.0 International License
 	# Copyright (c) 2018, Fabio Crameri All rights reserved.
+	# Crameri, F., (2018). Scientific colour-maps. Zenodo. http://doi.org/10.5281/zenodo.1243862
 	# Note: Original file converted to GMT version >= 5 CPT format.
 	EOF
 	if [ "$cpt" = "broc" ] || [ "$cpt" = "cork" ] || [ "$cpt" = "vik" ] || [ "$cpt" = "lisbon" ] || [ "$cpt" = "tofino" ] || [ "$cpt" = "berlin" ] || [ "$cpt" = "oleron" ] ; then
