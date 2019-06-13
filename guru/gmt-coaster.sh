@@ -5,7 +5,7 @@ gmt begin coaster ps
 	# Lay down the logo
 	gmt logo -R-1.875/1.875/-1.875/1.875 -Jx1i -DjCM+w3.7i -Sn -X0 -Y0
 	# Draw circle for debug only
-	#echo 0 0 | gmt psxy -Wfaint -N -Sc4i
+	echo 0 0 | gmt psxy -W1p -N -Sc4i
 	# Place WR code
 	echo 0 -1.2 | gmt psxy -SkQR/0.65i
 	echo "0 0.95 SUPPORTED BY US NSF" | gmt text -F+f12p,Helvetica-Bold
@@ -17,3 +17,4 @@ gmt begin coaster ps
 gmt end
 # RIP but add 0.125 inch margins so final file is 4x4 inches.
 gmt psconvert coaster.ps -TG -Z -E600 -A+m0.125i -P
+rm -f path.txt
