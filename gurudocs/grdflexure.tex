@@ -47,20 +47,20 @@ k = \left [ \frac{(\rho_m - \rho_i)g}{D} \right ]^{\frac{1}{4}}, \quad \epsilon_
 \label{eq:Eq_7}
 \end{equation}
 for subscripts $s = \left (x, y, xy \right )$.
-In the most common scenario, $N_u$ are all zero and the elastic response function becomes isotropic:
+In the most common scenario, $N_s$ are all zero and the elastic response function becomes isotropic:
 \begin{equation}
 \Phi_e(k_r) = \left [ 1 + \alpha_r^4 \right ]^{-1}.
 \label{eq:Eq_9}
 \end{equation}
-If the foundation is an inviscid half-space, then the {\it relaxation parameter} $\tau(k_r) = 0$ and there is no time-dependence.
-Otherwise, it is given by
+If the foundation is an inviscid half-space, then the {\it relaxation parameter} $\tau(k_r) = 0$, there is no time-dependence,
+and $\Phi(\mathbf{k},t) = \Phi_e(\mathbf{k})$. Otherwise, it is given by
 \begin{equation}
 \tau(k_r) = \frac{\rho_m g}{2 \eta_m k_r} \beta(k_r),
 \label{eq:Eq_10}
 \end{equation}
 where $\beta(k_r)$ depends on whether we have a finite-thickness layer of thickness $T_a$ and viscosity
 $\eta_a$ above the half-space of viscosity $\eta_m$ (Cathles, 1975; Nakada, 1986).
-If no finite layer then $\beta(k_r) = 1$, otherwise
+If no finite layer exists then $\beta(k_r) = 1$, otherwise
 \begin{equation}
 \beta(k_r) = \frac{(\theta + \theta^{-1}) CS + k_r T_a (\theta - \theta^{-1}) + S^2 + C^2}{2CS\theta + (1-\theta)k_r^2 T_a^2 + \theta S^2 + C^2},
 \label{eq:Eq_11}
@@ -76,17 +76,17 @@ where
 \noindent
 In the limit $t \rightarrow \infty$, $\tau  \rightarrow0$ and we approach the purely elastic solution
 \begin{equation}
-W(\mathbf{k}) = A \gamma H(\mathbf{k}) \Phi_e(k_r).
+W(\mathbf{k}) = A \gamma H(\mathbf{k}) \Phi_e(\mathbf{k}).
 \label{eq:Eq21}
 \end{equation}
-Otherwise, if the plate has no strength, then $\Phi_e(k_r) = 1$ and the response function is {purely viscous}:
+Otherwise, if the plate has no strength, then $\Phi_e(\mathbf{k}) = 1$ and the response function is {purely viscous}:
 \begin{equation}
 \Phi(k_r,t) = \left [ 1 - \exp \left \{ - \frac{(\rho_m - \rho_l) \tau(k_r)}{\rho_m} t \right \} \right ].
 \label{eq:Eq19b}
 \end{equation}
-For $t \rightarrow \infty$ (or an inviscid half-space) we reach Airy isostasy, $w(\mathbf{x}) = A h(\mathbf{x})$.
+For $t \rightarrow \infty$ (or an inviscid half-space) we approach Airy isostasy, $w(\mathbf{x}) = A h(\mathbf{x})$.
 
-{\center \bf 3. Viscoelastic plate over inviscid half-space}\\
+{\center \bf 3. Viscoelastic plate over an inviscid half-space}\\
 
 This special case has the solution
 \begin{equation}
