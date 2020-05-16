@@ -1,0 +1,108 @@
+%------------------------------------------
+% Notes regarding grdflexure firmovisous response function
+% Paul Wessel, May 2020
+
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{epsfig}
+\usepackage{makeidx}
+\usepackage{float}
+\usepackage{times}
+\usepackage{mathptm}
+
+\begin{document}
+%------------------------------------------
+
+%------------------------------------------
+{\center \bf Firmoviscous Response Function in grdflexure}\\
+
+Deformation caused by topographic relief $h(\mathbf{x})$ applied instantaneously to a
+rheologic foundation and evaluated at time $t$ is given in the Fourier domain as
+\begin{equation}
+W(\mathbf{k},t) = \gamma \left (\frac{\rho_l - \rho_w}{\rho_m - \rho_l} \right ) H(\mathbf{k}) \Phi(\mathbf{k},t) = \gamma A H(\mathbf{k}) \Phi(\mathbf{k},t),
+\label{eq:Eq_1}
+\end{equation}
+where $\mathbf{k} = (k_x, k_y)$ is the wavenumber vector, $k_r$ its magnitude, $A$ the Airy density ratio,
+and $\gamma$ a constant that depends on infill density: If $\rho_i = \rho_l$ then $\gamma = 1$,
+otherwise infill density varies spatially and a Fourier solution (\ref{eq:Eq_1}) is not valid.
+We avoid trouble by letting $\rho_l = \rho_i$ and increase deformation amplitude by
+\begin{equation}
+\gamma = \sqrt{\frac{\rho_i - \rho_w}{\rho_m - \rho_l}}.
+\label{eq:Eq_3}
+\end{equation}
+The approximation is good except for very large loads on thin plates (Wessel, 2001, 2016).
+The {\it firmoviscous response function} $\Phi(\mathbf{k},t)$ scales deformation at given wavenumber and time
+and depends on rheological parameters and in-plane stresses:
+\begin{equation}
+\Phi(\mathbf{k},t) = \Phi_e(\mathbf{k}) \left [ 1 - \exp \left \{ - \frac{(\rho_m - \rho_l) \tau(k_r)}{\rho_m\Phi_e(\mathbf{k})} t \right \} \right ].
+\end{equation}
+Here, the time-independent {\it elastic response function} is
+\begin{equation}
+\Phi_e(\mathbf{k}) = \left [ 1 + \alpha_r^4 + \epsilon_x \alpha_x^2 + \epsilon_y \alpha_y^2 + \epsilon_{xy} \alpha_{xy}^2 \right ]^{-1}, \quad \alpha_u = k_s / k,
+\label{eq:Eq_5}
+\end{equation}
+where the {\it flexural wavenumber} $k$ and constants $\epsilon_s$ given in-plane stresses $N_x, N_y, N_{xy}$ are
+\begin{equation}
+k = \left [ \frac{(\rho_m - \rho_i)g}{D} \right ]^{\frac{1}{4}}, \quad \epsilon_s = \left [ \frac{N_s}{(\rho_m - \rho_i)g} \right ]^{\frac{1}{2}},
+\label{eq:Eq_7}
+\end{equation}
+for subscripts $s = \left (x, y, xy \right )$.
+In the most common scenario, $N_u$ are all zero and the elastic response function becomes isotropic:
+\begin{equation}
+\Phi_e(k_r) = \left [ 1 + \alpha_r^4 \right ]^{-1}.
+\label{eq:Eq_9}
+\end{equation}
+If the foundation is an inviscid half-space, then the {\it relaxation parameter} $\tau(k_r) = 0$ and there is no time-dependence.
+Otherwise, it is given by
+\begin{equation}
+\tau(k_r) = \frac{\rho_m g}{2 \eta_m k_r} \beta(k_r),
+\label{eq:Eq_10}
+\end{equation}
+where $\beta(k_r)$ depends on whether we have a finite-thickness layer of thickness $T_a$ and viscosity
+$\eta_a$ above the half-space of viscosity $\eta_m$ (Cathles, 1975; Nakada, 1986).
+If no finite layer then $\beta(k_r) = 1$, otherwise
+\begin{equation}
+\beta(k_r) = \frac{(\theta + \theta^{-1}) CS + k_r T_a (\theta - \theta^{-1}) + S^2 + C^2}{2CS\theta + (1-\theta)k_r^2 T_a^2 + \theta S^2 + C^2},
+\label{eq:Eq_11}
+\end{equation}
+where
+\begin{equation}
+\theta = \eta_a/\eta_m, \quad S = \sinh (k_r T_a), \quad S = \cosh (k_r T_a).
+\label{eq:Eq_12}
+\end{equation}
+
+{\center \bf 2. Special Cases}\\
+
+\noindent
+In the limit $t \rightarrow \infty$, $\tau  \rightarrow0$ and we approach the purely elastic solution
+\begin{equation}
+W(\mathbf{k}) = A \gamma H(\mathbf{k}) \Phi_e(k_r).
+\label{eq:Eq21}
+\end{equation}
+Otherwise, if the plate has no strength, then $\Phi_e(k_r) = 1$ and the response function is {purely viscous}:
+\begin{equation}
+\Phi(k_r,t) = \left [ 1 - \exp \left \{ - \frac{(\rho_m - \rho_l) \tau(k_r)}{\rho_m} t \right \} \right ].
+\label{eq:Eq19b}
+\end{equation}
+For $t \rightarrow \infty$ (or an inviscid half-space) we reach Airy isostasy, $w(\mathbf{x}) = A h(\mathbf{x})$.
+
+{\center \bf 3. Viscoelastic plate over inviscid half-space}\\
+
+This special case has the solution
+\begin{equation}
+\Phi(\mathbf{k},t) = 1 - \left [ 1 - \Phi_e(\mathbf{k}) \right ] \exp \left \{ - \frac{t }{t_m}\Phi_e(\mathbf{k}) \right \},
+\end{equation}
+where $t_m$ is the Maxwell relaxation time.
+
+\noindent
+
+{\center \bf 4. References}\\
+
+\noindent
+Cathles, L. M., {\it The viscosity of the Earth's mantle}, 386 pp., Princeton University Press, 1975. \\
+Nakada, M., Holocene sea levels in oceanic islands: Implications for the rheological structure of the earth's mantle, {\it Tectonophysics, 121}, 263--276, 1986.\\
+Wessel, P., Analytical solutions for 3-D flexural deformation of semi-infinite elastic plates, {\it Geophys. J. Int., 124}, 907-918, 1996.\\
+Wessel, P., Global distribution of seamounts inferred from gridded Geosat/ERS-1 altimetry, {\it J. Geophys. Res., 106(B9)}, 19,431-419,441, 2001.\\
+Wessel, P., Regional–residual separation of bathymetry and revised estimates of Hawaii plume flux, {\it Geophys. J. Int., 204(2)}, 932-947, 2016.
+
+\end{document}
