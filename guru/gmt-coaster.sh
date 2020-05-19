@@ -1,5 +1,5 @@
 #!/bin/bash
-# Create a GMT coaster for a 4" coster.  Max diameter of graphic is 3.75"
+# Create a GMT coaster for a 4" coaster.  Max diameter of graphic is 3.75"
 gmt begin coaster ps
 	gmt set PS_MEDIA 3.75ix3.75i
 	# Lay down the logo
@@ -16,5 +16,5 @@ gmt begin coaster ps
 	gmt psxy path.txt -Wfaint -N -Sqn1:+l"generic-mapping-tools.org"+v+f18p,Helvetica-Bold+h -p180+w0/0
 gmt end
 # RIP but add 0.125 inch margins so final file is 4x4 inches.
-gmt psconvert coaster.ps -TG -Z -E600 -A+m0.125i -P
+gmt psconvert coaster.ps -TG -E600 -A+m0.125i -P
 rm -f path.txt
