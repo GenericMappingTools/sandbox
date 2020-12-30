@@ -74,10 +74,10 @@ if ! test -d fix_typos; then
     cd ..
 fi
 
-EXCLUDED_FILES="*/.svn*,configure,config.status,config.sub,*/autom4te.cache/*"
+EXCLUDED_FILES="*/.git*,configure,config.status,config.sub,*/autom4te.cache/*"
 EXCLUDED_FILES="$EXCLUDED_FILES,*/doc/br/*,*/data/*,figures.mp,*/tmp/*,*/ruby/*,*.grd"
 EXCLUDED_FILES="$EXCLUDED_FILES,*/localization/*,*.jpg,*.png,*.xyg,*.xym,tracks.txt,oz_quakes.txt,gshhs_c.txt,carter.d"
-EXCLUDED_FILES="$EXCLUDED_FILES,*/dbuild/*,*/rbuild/*,*/dbuild-mp/*,*/xbuild/*"
+EXCLUDED_FILES="$EXCLUDED_FILES,*/dbuild/*,*/rbuild/*,*/dbuild-mp/*,*/rbuild-mp/*,*/xbuild/*"
 EXCLUDED_FILES="$EXCLUDED_FILES,*/fix_typos/*,fix_typos.sh,*.eps,*.ps,*.pdf,europe-capitals-ru.csv"
 EXCLUDED_FILES="$EXCLUDED_FILES,dbuild/*,rbuild/*,dbuild-mp/*,LICENCE.txt,*.CM4,*.nc,*.rot,*.segy"
 WORDS_WHITE_LIST="CPL_SUPRESS_CPLUSPLUS,SRP_NAM,ADRG_NAM,'SRP_NAM,AuxilaryTarget"

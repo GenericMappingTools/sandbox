@@ -1,0 +1,124 @@
+%------------------------------------------
+% Notes regarding grdflexure firmovisous response function
+% Paul Wessel, May 2020
+
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{epsfig}
+\usepackage{makeidx}
+\usepackage{float}
+\usepackage{times}
+\usepackage{mathptm}
+
+\begin{document}
+%------------------------------------------
+
+%------------------------------------------
+{\center \bf Amplitude calculations in grdseamount (8/1/2020)}\\
+
+The {\bf grdseamount} module can compute the amplitude $h(\mathbf{x,t})$ of a growing seamount
+for four different types of shape
+\begin{enumerate}
+	\item A cone
+	\item A paraboloid
+	\item A Gaussian
+	\item A disc
+\end{enumerate}
+Except for the disc, all shapes may have a truncated top determined by a flattening parameter $f$
+that goes from 0 (no flattening) to 1 (no seamount at all).
+All shapes may have an elliptical or circular basal area.  Given a normalized volume fraction function
+$v(t)$ that goes from 0 to 1 over the lifespan of the seamount, we wish to determine the
+parameters of the shape that yields the actual volume at time $t$, which is simply
+\begin{equation}
+V(t) = V_0 v(t),
+\label{eq:vt}
+\end{equation}
+where $V_0$ is the final volume of the fully grown seamount of the given shape. To yield a unique result, we
+relate the radius $r(t)$ and height $h(t)$ at a given time to a constant slope, so height is a function
+of the radius.  With this conformality we can solve for the radius (and major, minor axes in
+the elliptical case).  Below, we define $r_0$ as either the final circular radius or the final
+major axis ($a$), with $e = b/a$ as the eccentricity (which is 1 for circular). In all cases,
+the minor axis is simply $b(t) = e a(t)$, and $h^*$ is the projected height in the absence of truncation.
+
+{\center \bf 1. Growing conical seamount}\\
+
+We wish to determine $r(t)$ from $V(t)$.  First, the final volume is given by
+\begin{equation}
+V_0 = \frac{e \pi \alpha (1 - f^3)}{3}r_0^3,
+\end{equation}
+where the constant slope of the cone is given by
+\begin{equation}
+\alpha = \frac{h^*}{r_0} = \frac{h_0}{(1-f)r_0} = \frac{h(t)}{(1-f)r(t)}.
+\end{equation}
+We then wish to solve
+\begin{equation}
+V(t) = \frac{e \pi \alpha (1 - f^3)}{3}r(t)^3,
+\end{equation}
+yielding
+\begin{equation}
+r(t) = \left ( \frac{3 V(t)}{e \pi \alpha (1 - f^3)} \right )^{1/3}.
+\end{equation}
+This then yields
+\begin{equation}
+h(t) = \alpha (1 - f) r(t).
+\end{equation}
+
+{\center \bf 1. Growing paraboloid}\\
+
+We wish to determine $r(t)$ from $V(t)$.  First, the final volume is given by
+\begin{equation}
+V_0 = \frac{e \pi \alpha (1 - f^4)}{2}r_0^3,
+\end{equation}
+where the constant slope of the paraboloid is given by
+\begin{equation}
+\alpha = \frac{h^*}{r_0} = \frac{h_0}{(1-f^2)r_0} = \frac{h(t)}{(1-f^2)r(t)}.
+\end{equation}
+We then wish to solve
+\begin{equation}
+V(t) = \frac{e \pi \alpha (1 - f^4)}{2}r(t)^3,
+\end{equation}
+yielding
+\begin{equation}
+r(t) = \left ( \frac{2 V(t)}{e \pi \alpha (1 - f^4)} \right)^{1/3}.
+\end{equation}
+This then yields
+\begin{equation}
+h(t) = \alpha (1 - f^2) r(t).
+\end{equation}
+
+
+{\center \bf 1. Growing Gaussian}\\
+
+We wish to determine $r(t)$ from $V(t)$.  Because of truncation, we need to compute the height scale
+\begin{equation}
+\gamma = e^\frac{9}{2}f^2.
+\end{equation}
+which of course is 1 if no truncation, and
+where the constant slope of the Gaussian is given by
+\begin{equation}
+\alpha = \frac{h^*}{r_0} = \frac{h_0}{\gamma r_0} = \frac{h(t) \gamma}{r(t)}.
+\end{equation}
+First, the final volume is given by
+\begin{equation}
+V_0 = \frac{2 e \pi \alpha (1 + \frac{9}{2}f^2)}{9\gamma}r_0^3.
+\end{equation}
+We then wish to solve
+\begin{equation}
+V(t) = \frac{e \pi \alpha (1 + \frac{9}{2}f^2)}{9\gamma}r(t)^3,
+\end{equation}
+yielding
+\begin{equation}
+r(t) = \left ( \frac{9 \gamma V(t)}{2 e \pi \alpha (1 + \frac{9}{2}f^2))} \right)^{1/3}.
+\end{equation}
+This then yields
+\begin{equation}
+h(t) = \frac{\alpha}{\gamma} r(t).
+\end{equation}
+
+
+In all cases, inserting (\ref{eq:vt}) into the expressions for $r(t)$ gives
+\begin{equation}
+r(t) = v(t)^{1/3} r_0.
+\end{equation}
+
+\end{document}
