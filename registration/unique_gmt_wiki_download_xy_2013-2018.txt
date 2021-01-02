@@ -1,3 +1,8 @@
+# This file was salvaged from the old Redmine wiki and has the unique
+# lon,lat locations from downloads and the number of downloads associated
+# with each location (some cities have thousands of downloads)
+#
+# Lon	Lat	Downloads
 139.69	35.69	8295
 116.3883	39.9289	6439
 139.7514	35.685	3460
