@@ -5,8 +5,8 @@
 # 2. Make it clear what GMT is
 # 3. Show where to learn more
 # 4. Indicate what OS it supports
-# 4. List all the environments it can be used in
-# 5. Indicate NSF support
+# 5. List all the environments it can be used in
+# 6. Indicate NSF support
 
 gmt begin gmt-eco-system png
 	# Thick primary and thin secondary frame with very light fill
