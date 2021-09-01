@@ -1,0 +1,107 @@
+%	$Id$
+% Internal documentation for Solving GPSgridder
+% Paul Wessel, November 16, 2016.
+\documentclass[12pt,letterpaper,margin=0.5in]{report}
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{breqn}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{lscape}
+\textheight = 9 in
+\topmargin = -1 in
+\begin{document}
+
+\section{GPSGRIDDER MATRIX SOLUTION}
+
+We refer to equation (9) in {\it Sandwell and Wessel} [2016].  This equation constitutes a linear system {\bf Ax} = {\bf b}
+of dimensions $2n$ by $2n$
+given we have $n$ pairs of ($u_i, v_i$) observations. We can write this as
+
+
+% MathType!MTEF!2!1!+-
+% faaagCart1ev2aaaKnaaaaWenf2ys9wBH5garuavP1wzZbqedmvETj
+% 2BSbqefm0B1jxALjharqqtubsr4rNCHbGeaGqiVu0Je9sqqrpepe0t
+% bbL8FesqqrFfpeea0xe9Lq-Jc9vqaqpepm0xbba9pwe9Q8fs0-yqaq
+% pepae9pg0FirpepeKkFr0xfr-xfr-xb9Gqpi0dc9adbaqaaeGaciGa
+% aiaabeqaamaabaabaaGcbaWaamWaaeaafaWabeGbgaeaabqaaiaadE
+% gadaWgaaWcbaGaaGymaiaacYcacaaIXaaabeaakiaadEhadaqhaaWc
+% baGaaGymaaqaaaaaaOqaaiabl+UimbqaaiaadEgadaWgaaWcbaGaaG
+% ymaiaacYcacaWGUbaabeaakiaadEhadaqhaaWcbaGaaGymaaqaaaaa
+% aOqaaiaadEgadaWgaaWcbaGaaGymaiaacYcacaWGUbGaey4kaSIaaG
+% ymaaqabaGccaWG3bWaa0baaSqaaiaaigdaaeaaaaaakeaacqWIVlct
+% aeaacaWGNbWaaSbaaSqaaiaaigdacaGGSaGaamOBaiabgUcaRiaad2
+% gaaeqaaOGaam4DamaaDaaaleaacaaIXaaabaaaaaGcbaGaeSO7I0ea
+% baGaeSy8I8eabaGaeSO7I0eabaGaeSO7I0eabaGaeSy8I8eabaGaeS
+% O7I0eabaGaam4zamaaBaaaleaacaWGUbGaaiilaiaaigdaaeqaaOGa
+% am4DamaaDaaaleaacaWGUbaabaaaaaGcbaGaeS47IWeabaGaam4zam
+% aaBaaaleaacaWGUbGaaiilaiaad6gaaeqaaOGaam4DamaaDaaaleaa
+% caWGUbaabaaaaaGcbaGaam4zamaaBaaaleaacaWGUbGaaiilaiaad6
+% gacqGHRaWkcaaIXaaabeaakiaadEhadaqhaaWcbaGaamOBaaqaaaaa
+% aOqaaiabl+UimbqaaiaadEgadaWgaaWcbaGaamOBaiaacYcacaWGUb
+% Gaey4kaSIaamyBaaqabaGccaWG3bWaa0baaSqaaiaad6gaaeaaaaaa
+% keaacaWGKbWaaSbaaSqaaiaad6gacqGHRaWkcaaIXaGaaiilaiaaig
+% daaeqaaOGaam4DamaaDaaaleaacaWGUbGaey4kaSIaaGymaaqaaaaa
+% aOqaaiabl+UimbqaaiaadsgadaWgaaWcbaGaamOBaiabgUcaRiaaig
+% dacaGGSaGaamOBaaqabaGccaWG3bWaa0baaSqaaiaad6gacqGHRaWk
+% caaIXaaabaaaaaGcbaGaaGimaaqaaiabl+UimbqaaiaadsgadaWgaa
+% WcbaGaamOBaiabgUcaRiaaigdacaGGSaGaamOBaiabgUcaRiaad2ga
+% aeqaaOGaam4DamaaDaaaleaacaWGUbGaey4kaSIaaGymaaqaaaaaaO
+% qaaiabl6UinbqaaiablgVipbqaaiabl6Uinbqaaiabl6Uinbqaaiab
+% lgVipbqaaiabl6UinbqaaiaadsgadaWgaaWcbaGaamOBaiabgUcaRi
+% aad2gacaGGSaGaaGymaaqabaGccaWG3bWaa0baaSqaaiaad6gacqGH
+% RaWkcaWGTbaabaaaaaGcbaGaeS47IWeabaGaamizamaaBaaaleaaca
+% WGUbGaey4kaSIaamyBaiaacYcacaWGUbaabeaakiaadEhadaqhaaWc
+% baGaamOBaiabgUcaRiaad2gaaeaaaaaakeaacaWGKbWaaSbaaSqaai
+% aad6gacqGHRaWkcaWGTbGaaiilaiaad6gacqGHRaWkcaaIXaaabeaa
+% kiaadEhadaqhaaWcbaGaamOBaiabgUcaRiaad2gaaeaaaaaakeaacq
+% WIVlctaeaacaaIWaaaaaGaay5waiaaw2faaiabgwSixpaadmaabaqb
+% amqabyqaabaabaGaeqySde2aaSbaaSqaaiaaigdaaeqaaaGcbaGaeS
+% O7I0eabaGaeqySde2aaSbaaSqaaiaad6gaaeqaaaGcbaGaeqySde2a
+% aSbaaSqaaiaad6gacqGHRaWkcaaIXaaabeaaaOqaaiabl6Uinbqaai
+% abeg7aHnaaBaaaleaacaWGUbGaey4kaSIaamyBaaqabaaaaaGccaGL
+% BbGaayzxaaGaeyypa0ZaamWaaeaafaWabeGbbaeaaeaacaWG6bWaaS
+% baaSqaaiaaigdaaeqaaOGaam4DamaaDaaaleaacaaIXaaabaaaaaGc
+% baGaeSO7I0eabaGaamOEamaaBaaaleaacaWGUbaabeaakiaadEhada
+% qhaaWcbaGaamOBaaqaaaaaaOqaaiaadohadaWgaaWcbaGaaGymaaqa
+% baGccaWG3bWaa0baaSqaaiaad6gacqGHRaWkcaaIXaaabaaaaaGcba
+% GaeSO7I0eabaGaam4CamaaBaaaleaacaWGTbaabeaakiaadEhadaqh
+% aaWcbaGaamOBaiabgUcaRiaad2gaaeaaaaaaaaGccaGLBbGaayzxaa
+% aaaa!F91F!
+\[
+\left[ {\begin{array}{*{20}{c}}
+{{q_{11}}w_1^{u}}& \cdots &{{q_{1n}}w_1^{u}}&\vline& {{w_{11}}w_1^{u}}& \cdots &{{w_{1n}}w_1^{u}}\\
+ \vdots & \ddots & \vdots &\vline&  \vdots & \ddots & \vdots \\
+{{q_{n1}}w_n^{u}}& \cdots &{{q_{nn}}w_n^{u}}&\vline& {{w_{n1}}w_n^{u}}& \cdots &{{w_{nn}}w_n^{u}}\\
+\hline
+{{w_{11}}w_{1}^{v}}& \cdots &{{w_{1n}}w_{1}^{v}}&\vline& {{p_{11}}w_{1}^{v}}& \cdots &{{p_{1n}}w_{1}^{v}}\\
+ \vdots & \ddots & \vdots &\vline&  \vdots & \ddots & \vdots \\
+{{w_{n1}}w_{n}^{v}}& \cdots &{{w_{nn}}w_{n}^{v}}&\vline& {{p_{n1}}w_{n}^{v}}& \cdots &{{p_{nn}}w_{n}^{v}}
+\end{array}} \right] \cdot \left[ {\begin{array}{*{20}{c}}
+{{f _x^1}}\\
+ \vdots \\
+{{f _x^n}}\\
+\hline
+{{f _y^1}}\\
+ \vdots \\
+{{f _y^n}}
+\end{array}} \right] = \left[ {\begin{array}{*{20}{c}}
+{{u_1}w_1^{u}}\\
+ \vdots \\
+{{u_n}w_n^{u}}\\
+\hline
+{{v_1}w_1^{v}}\\
+ \vdots \\
+{{v_m}w_n^{v}}
+\end{array}} \right]
+\]
+
+Here, $q_{ij}$, $w_{ij}$, and $p_{ij}$ are the Green’s functions given by equation (8) and evaluated for the
+radial distance between points $i$ and $j$.  Note we have scaled each equation by the weight $w_i$
+(= $1/\sigma_i$) for the $i$’th data measurement; for unweighted data, these are all unity.
+Having solved for the forces ${\mathbf f}_x$ and ${\mathbf f}_y$ we evaluate the solution using (10).
+
+\section{REFERENCES}
+
+Sandwell, D. T., and P. Wessel (2016), Interpolation of 2-D vector data using constraints from elasticity,
+{\it Geophys. Res. Lett., 43}, 10,703--10,709, doi:10.1002/2016GL070340.
+\end{document}
