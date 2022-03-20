@@ -16,7 +16,7 @@
 \begin{figure}[h!]
   \centering
   \includegraphics[width=\textwidth]{slides_fig1.png}
-  \caption{Geometry for an ad-hoc landslide approximation in grdseamount.  The slide material (red hachured area)
+  \caption{Geometry for an \emph{ad hoc} landslide approximation in \texttt{grdseamount}.  The slide material (red hachured area)
   will be deposited at the toe of the seamount (blue hachured area) reaching up to a height of $h_c$ and linearly
   tapering to zero at a distal point $r_d$.}
   \label{slides_fig1}
@@ -27,15 +27,14 @@ for the purpose of studying the isostatic consequences.  I found the old C codes
 better as well as implement it as a new option in grdseamount.  I refer to Figure~\ref{slides_fig1}.  The equation for the
 shape of the slide for the radial range $r_2$ to $r_1$ is given by a single equation:
 \begin{equation}
-h_s(r) = h_1 + \Delta h q(u),
+h_s(r) = h_1 + \Delta h \cdot q(u),
 \end{equation}
-where $\Delta h = h_2 - h_1$ is the \emph{height} range of the slide and $q(u)$ is the normalized shape curve of the slide
-modeled by
+where $\Delta h = h_2 - h_1$ is the \emph{height} range of the slide and $q(u)$ is the normalized shape curve of the slide:
 \begin{equation}
 q(u) = u_0 \left (\frac{1 + u_0}{u + u_0} - 1 \right ).
 \end{equation}
 This is basically a hyperbolic curve and we can use the tuning parameter $u_0$ to carve more or less into the seamount core.
-Here, $u$ is the normalized distance from $r_2$ to $r_1$ over which $q$ goes from 1 to 0:
+Here, $u$ is the normalized distance from $r_2$ to $r_1$, and over this range $q$ goes from 1 to 0:
 \begin{equation}
 u = \frac{r-r_2}{\Delta r},
 \end{equation}
@@ -59,7 +58,7 @@ triangular (for a cone) crossection is delimited by the lines $r = r_2$, $h = h_
 we then use Pappas' theorem to get the corresponding volume $V_f = 2 \pi \bar{r}_f A_f$.  For $V_s$ the upper limit is $h_s(r)$ instead of $h(r)$ so we can integrate
 $h_s(r)$ for an analytical answer. First we get the area:
 \begin{equation}
-A_s = \int_{r_2}^{r_1} h_s(r) dr = \Delta h \Delta r \int_0^1 q(u) du = \Delta h \Delta r \left \{ u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] \right \}.
+A_s = \int_{r_2}^{r_1} h_s(r) dr = \Delta h \Delta r \int_0^1 q(u) du = \Delta h \Delta r u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ].
 \end{equation}
 To use Pappas' theorem for computing the volume we need the radius to the centroid, which is obtained via
 \begin{equation}
@@ -96,7 +95,7 @@ with unique solution
 r_d = \frac{-r_c + \sqrt{r_c^2 + 4c}}{2}.
 \end{equation}
 
-It may be useful to state we want a slide that redeposits a fraction $\phi$ of the total volume $V_0$ of the entire seamount. In that
+It is often required to state we want a slide that redeposits a certain fraction $\phi$ of the total volume $V_0$ of the entire seamount. In that
 case we will need to compute $u_0$ given the other parameters to match the volumes.  We then have from above
 \begin{equation}
 V_s = \phi V_0 = V_f - 2 \pi \Delta h \Delta r \left ( r_2 + \Delta r\bar{u} \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ].
@@ -105,15 +104,63 @@ We rearrange this equation into the form
 \begin{equation}
 \left ( r_2 + \Delta r \bar{u} \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] = \frac{V_f - \phi V_0}{2 \pi \Delta h \Delta r}
 \end{equation}
-and solve for $u_0$ numerically.  We note that $V_s$ cannot exceed $V_f$ so $\phi$ is limited for the given other parameters.  As
-$V_s$ pushes closer to $V_f$ we will get diminishing values for $u_0$.
+and solve for $u_0$ numerically.  We note that $V_s$ cannot exceed $V_f$ so $\phi$ is limited by the given other parameters.  As
+$V_s$ approaches $V_f$ we will get diminishing values for $u_0$.
 
-Most slides do not involve the entire seamount, but instead affects a limited sector of it.  Thus, our slide sector is specified by two
+Most slides do not involve the entire seamount, but instead only affects a limited sector of it.  Thus, our slide sector is specified by two
 azimuths $\alpha_1$ and $\alpha_2$ and the slide only affects that part of the seamount with a volume fraction
 \begin{equation}
 \theta = \frac{\alpha_2 - \alpha_1}{360}.
 \end{equation}
-In reporting volumes we need to scale by $\theta$ but the equations above balancing volumes are not affected since $\theta$ would cancel from both sides of the equations.
+In reporting volumes we need to scale by $\theta$ but the equations above for balancing volumes are not affected since $\theta$ would cancel from both sides of the equations.
+
+\section{Volumes given specific seamount shapes}
+
+In order to use Pappas' theorem to compute the flank volume $V_f = 2 \pi \bar{r}_f A_f$ we need analytical
+solutions for the various areas and centroid distances.  These are determined in this section.
+
+\subsection{Conic Seamounts}
+
+For conic seamounts we can compute both $A_f^c$ and $\bar{r}_f^c$ analytically.  We find
+\begin{equation}
+A_f^c = \frac{h_0 \Delta_r^2}{2 r_0 (1-f)}, \quad \bar{r}_f^c = \frac{2 r_2 + r_1}{12}.
+\end{equation}
+
+\subsection{Parabolic Seamounts}
+
+For parabolic seamounts we can compute both $A_f^p$ and $\bar{r}_f^p$ analytically.  We find
+\begin{equation}
+A_f^p = \frac{h_0 \left ( r_1^3 - 3 r_1^2 r_2 + 2 r_2^3\right)}{6 r_0^2 (1-f)}, \quad \bar{r}_f^p = \frac{\left (r_2^2 - r_2^2 \right )^2}{24 \left ( r_1^3 - 3 r_1^2 r_2 + 2 r_2^3\right)}.
+\end{equation}
+
+\subsection{Gaussian Seamounts}
+
+For Gaussian seamounts we can compute both $A_f^g$ and $\bar{r}_f^g$ analytically.  We find
+\begin{equation}
+A_f^g = h_0 e^{\frac{9}{2}f^2} \left \{ \frac{\sqrt{2\pi}}{6 r_0} \left [\mbox{erf} \left ( \frac{3\sqrt{2}r_2}{2 r_0}\right ) - \mbox{erf} \left ( \frac{3\sqrt{2}r_1}{2 r_0} \right ) \right ] - (r_1 - r_2)e^{\frac{9}{2}\left (\frac{r_1}{r_0}\right )^2} \right \}.
+\end{equation}
+\begin{equation}
+\bar{r}_f^g = \sqrt{\frac{2}{\pi}} r_0^3\frac{\left [e^{-\frac{9}{3}\left (\frac{r_2}{r_0}\right)^2} - e^{-\frac{9}{3}\left (\frac{r_1}{r_0}\right)^2} \right ] - \frac{r_1^2 - r_2^2}{2}e^{\frac{9}{2}\left(\frac{r_1}{r_0}\right )^2}}{\left [\mbox{erf} \left ( \frac{3\sqrt{2}r_2}{2 r_0}\right ) - \mbox{erf} \left ( \frac{3\sqrt{2}r_1}{2 r_0} \right ) \right ] - (r_1 - r_2)e^{\frac{9}{2}\left (\frac{r_1}{r_0}\right )^2}}.
+\end{equation}
+
+\subsection{Polynomial Seamounts}
+
+For polynomial seamounts we can compute both $A_f^o$ and $\bar{r}_f^o$ analytically.  Introducing $u_1 = r_1/r_0$ and $u_2 = r_2 / r_0$ we find
+\begin{equation}
+A_f^o = \frac{h_0 r_0}{p(f)} \left \{ (u_1 - u_2)(1 - p(u_1)) + \frac{1}{4}\left [ 6(u_1^2 - u_2^2) - (u_1^4 - u_2^4)\right ] -  L - T \right \}
+\end{equation}
+where 
+\begin{equation}
+L = \frac{3}{2} \log \left ( \frac{u_1^2 - u_1 + 1}{u_2^2 - u_2 + 1}\right ), \quad T = \sqrt{3} \left [ \tan^{-1} \left (\frac{\sqrt{3}}{3}(2u_1 - 1)\right ) - \tan^{-1} \left (\frac{\sqrt{3}}{3}(2u_2 - 1)\right )\right ].
+\end{equation}
+For the centroid location we first note
+\begin{equation}
+\bar{r}_f^o = r_1 + r_0 \bar{u}_f^o = r_1 + r_0 \frac{\int_{u_2}^{u_1} \left ( p(u) - p(u_1)\right ) u du}{\int_{u_2}^{u_1} \left ( p(u) - p(u_1)\right )du},
+\end{equation}
+where we find
+\begin{equation}
+\bar{u}_f^o = \frac{\frac{1 - p(u_1)}{2}(u_1^2 - u_2^2) - 3 (u_1 - u_2) + (u_1^3 - u_2^3) - \frac{1}{5}(u_1^5 - u_2^5) + T - L}{(u_1 - u_2)(1 - p(u_1)) + \frac{1}{4}\left [ 6(u_1^2 - u_2^2) - (u_1^4 - u_2^4)\right ] -  L - T}.
+\end{equation}
 
 \section{REFERENCES}
 
