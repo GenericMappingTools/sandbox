@@ -15,10 +15,10 @@
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=\textwidth]{slides_fig1.png}
+  \includegraphics[width=5in]{slides_fig1.png}
   \caption{Geometry for an \emph{ad hoc} landslide approximation in \texttt{grdseamount}.  The slide material (red hachured area)
   will be deposited at the toe of the seamount (blue hachured area) reaching up to a height of $h_c$ and linearly
-  tapering to zero at a distal point $r_d$.}
+  tapering to zero at a distal point $r_d$. Note that $h_2 > h_1$ while $r_1 > r_2$.}
   \label{slides_fig1}
 \end{figure}
 
@@ -42,7 +42,7 @@ where $\Delta r = r_1 - r_2$ is the \emph{radial} range of the slide.
 Figure~\ref{slides_fig2} shows the typical shapes of $q(u)$ for a range of $u_0$ values.
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=\textwidth]{slides_fig2.png}
+  \includegraphics[width=5in]{slides_fig2.png}
   \caption{A variety of slide shapes are possible by varying $u_0$.  The slide area for a conical seamount would be the area
   between the flank (dashed line) and the selected curve.}
   \label{slides_fig2}
@@ -88,7 +88,7 @@ we must handle the awkward initial section separately:
 \end{equation}
 Simplifying this expression and equating the two volumes lead to the quadratic equation
 \begin{equation}
-r_d^2 + r_c r_d - \left (r_0^2 - r_0 r_c + \frac{3 V_s}{\pi h_c}\right ) = r_d^2 + r_c r_d - c = 0,
+r_d^2 + r_c r_d - \left (r_0^2 + r_0 r_c + \frac{3 V_s}{\pi h_c}\right ) = r_d^2 + r_c r_d - c = 0,
 \end{equation}
 with unique solution
 \begin{equation}
@@ -145,9 +145,21 @@ A_f^g = h_0 e^{\frac{9}{2}f^2} \left \{ \frac{\sqrt{2\pi}}{6 r_0} \left [\mbox{e
 
 \subsection{Polynomial Seamounts}
 
-For polynomial seamounts we can compute both $A_f^o$ and $\bar{r}_f^o$ analytically.  Introducing $u_1 = r_1/r_0$ and $u_2 = r_2 / r_0$ we find
+For polynomial seamounts we can compute both $A_f^o$ and $\bar{r}_f^o$ analytically.  First, let us set the stage with the function for the shape
+and the two integrals solved in Matlab:
 \begin{equation}
-A_f^o = \frac{h_0 r_0}{p(f)} \left \{ (u_1 - u_2)(1 - p(u_1)) + \frac{1}{4}\left [ 6(u_1^2 - u_2^2) - (u_1^4 - u_2^4)\right ] -  L - T \right \}
+p(u) = \frac{(1 + u)^3 (1 - u)^3}{1 + u^3},
+\end{equation}
+\begin{equation}
+\int \left ( p(u) - p(u_1)\right ) du = u \left(1 - p(u_1)\right) + \frac{3}{2}u^2 - \frac{1}{4}u^4 - \frac{3}{2} \log (u^2 - u + 1) - \sqrt{3} \tan^{-1} \left ( \frac{\sqrt{3}}{3}(2u - 1) \right),
+\end{equation}
+and
+\begin{equation}
+\int \left ( p(u) - p(u_1)\right ) u du =  -3 u + \frac{u^2}{2}\left(1 - p(u_1)\right) +u^3 - \frac{u^5}{5} - \frac{3}{2} \log (u^2 - u + 1) + \sqrt{3}\tan^{-1} \left ( \frac{\sqrt{3}}{3}(2u - 1) \right).
+\end{equation}
+Introducing $u_1 = r_1/r_0$ and $u_2 = r_2 / r_0$ we find
+\begin{equation}
+A_f^o = \frac{h_0 r_0}{p(f)} \left \{ (u_1 - u_2)(1 - p(u_1)) + \frac{3}{2}\left (u_1^2 - u_2^2\right ) - \frac{1}{4}\left (u_1^4 - u_2^4\right ) -  L - T \right \}
 \end{equation}
 where 
 \begin{equation}
@@ -159,11 +171,11 @@ For the centroid location we first note
 \end{equation}
 where we find
 \begin{equation}
-\bar{u}_f^o = \frac{\frac{1 - p(u_1)}{2}(u_1^2 - u_2^2) - 3 (u_1 - u_2) + (u_1^3 - u_2^3) - \frac{1}{5}(u_1^5 - u_2^5) + T - L}{(u_1 - u_2)(1 - p(u_1)) + \frac{1}{4}\left [ 6(u_1^2 - u_2^2) - (u_1^4 - u_2^4)\right ] -  L - T}.
+\bar{u}_f^o = \frac{ - 3 (u_1 - u_2) + \frac{1 - p(u_1)}{2}(u_1^2 - u_2^2) + (u_1^3 - u_2^3) - \frac{1}{5}(u_1^5 - u_2^5) - L + T}{(u_1 - u_2)(1 - p(u_1)) + \frac{3}{2}\left (u_1^2 - u_2^2\right) - \frac{1}{4}\left(u_1^4 - u_2^4\right ) - L - T}.
 \end{equation}
 
 \section{REFERENCES}
 
 Smith, J. R., and P. Wessel (2000), Isostatic consequences of giant landslides on the Hawaiian Ridge,
-{\it ure Appl. Geophys., 157}, 1097--1114, doi:10.1007/s000240050019.
+{\it Pure Appl. Geophys., 157}, 1097--1114, doi:10.1007/s000240050019.
 \end{document}
