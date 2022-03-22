@@ -130,17 +130,17 @@ A_f^c = \frac{h_0 \Delta_r^2}{2 r_0 (1-f)}, \quad \bar{r}_f^c = \frac{2 r_2 + r_
 
 For parabolic seamounts we can compute both $A_f^p$ and $\bar{r}_f^p$ analytically.  We find
 \begin{equation}
-A_f^p = \frac{h_0 \left ( r_1^3 - 3 r_1^2 r_2 + 2 r_2^3\right)}{6 r_0^2 (1-f)}, \quad \bar{r}_f^p = \frac{\left (r_2^2 - r_2^2 \right )^2}{24 \left ( r_1^3 - 3 r_1^2 r_2 + 2 r_2^3\right)}.
+A_f^p = \frac{h_0 \left ( r_1^3 - 3 r_1^2 r_2 + 2 r_2^3\right)}{6 r_0^2 (1-f)}, \quad \bar{r}_f^p = \frac{\left (r_1^2 - r_2^2 \right )^2}{24 \left ( r_1^3 - 3 r_1^2 r_2 + 2 r_2^3\right)}.
 \end{equation}
 
 \subsection{Gaussian Seamounts}
 
 For Gaussian seamounts we can compute both $A_f^g$ and $\bar{r}_f^g$ analytically.  We find
 \begin{equation}
-A_f^g = h_0 e^{\frac{9}{2}f^2} \left \{ \frac{\sqrt{2\pi}}{6 r_0} \left [\mbox{erf} \left ( \frac{3\sqrt{2}r_2}{2 r_0}\right ) - \mbox{erf} \left ( \frac{3\sqrt{2}r_1}{2 r_0} \right ) \right ] - (r_1 - r_2)e^{\frac{9}{2}\left (\frac{r_1}{r_0}\right )^2} \right \}.
+A_f^g = h_0 r_0 e^{\frac{9}{2}f^2} \left \{ \frac{\sqrt{2\pi}}{6} \left [\mbox{erf} \left ( \frac{3\sqrt{2}}{2}u_2\right ) - \mbox{erf} \left ( \frac{3\sqrt{2}}{2}u_1 \right ) \right ] - (u_1 - u_2)e^{-\frac{9}{2} u_1^2} \right \}.
 \end{equation}
 \begin{equation}
-\bar{r}_f^g = \sqrt{\frac{2}{\pi}} r_0^3\frac{\left [e^{-\frac{9}{3}\left (\frac{r_2}{r_0}\right)^2} - e^{-\frac{9}{3}\left (\frac{r_1}{r_0}\right)^2} \right ] - \frac{r_1^2 - r_2^2}{2}e^{\frac{9}{2}\left(\frac{r_1}{r_0}\right )^2}}{\left [\mbox{erf} \left ( \frac{3\sqrt{2}r_2}{2 r_0}\right ) - \mbox{erf} \left ( \frac{3\sqrt{2}r_1}{2 r_0} \right ) \right ] - (r_1 - r_2)e^{\frac{9}{2}\left (\frac{r_1}{r_0}\right )^2}}.
+\bar{r}_f^g = r_0\frac{\frac{1}{9} \left [e^{-\frac{9}{2}u_2^2} - e^{-\frac{9}{2}u_1^2} \right ] - \frac{1}{2}\left (u_1^2 - u_2^2 \right )e^{-\frac{9}{2}u_1^2}}{\frac{\sqrt{2\pi}}{6}\left [\mbox{erf} \left ( \frac{3\sqrt{2}}{2}u_2\right ) - \mbox{erf} \left ( \frac{3\sqrt{2}}{2}u_1 \right ) \right ] - (u_1 - u_2)e^{-\frac{9}{2}u_1^2}}.
 \end{equation}
 
 \subsection{Polynomial Seamounts}
