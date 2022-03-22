@@ -33,7 +33,8 @@ where $\Delta h = h_2 - h_1$ is the \emph{height} range of the slide and $q(u)$ 
 \begin{equation}
 q(u) = u_0 \left (\frac{1 + u_0}{u + u_0} - 1 \right ).
 \end{equation}
-This is basically a hyperbolic curve and we can use the tuning parameter $u_0$ to carve more or less into the seamount core.
+This is basically a hyperbolic curve and we can use the tuning parameter $u_0$ to carve more or less into the seamount core,
+which is an improvement upon the fixed scheme in {\it J. Smith and Wessel} (2000).
 Here, $u$ is the normalized distance from $r_2$ to $r_1$, and over this range $q$ goes from 1 to 0:
 \begin{equation}
 u = \frac{r-r_2}{\Delta r},
@@ -167,7 +168,7 @@ L = \frac{3}{2} \log \left ( \frac{u_1^2 - u_1 + 1}{u_2^2 - u_2 + 1}\right ), \q
 \end{equation}
 For the centroid location we first note
 \begin{equation}
-\bar{r}_f^o = r_1 + r_0 \bar{u}_f^o = r_1 + r_0 \frac{\int_{u_2}^{u_1} \left ( p(u) - p(u_1)\right ) u du}{\int_{u_2}^{u_1} \left ( p(u) - p(u_1)\right )du},
+\bar{r}_f^o = r_2 + \Delta r \bar{u}_f^o = r_2 + \Delta r \frac{\int_{u_2}^{u_1} \left ( p(u) - p(u_1)\right ) u du}{\int_{u_2}^{u_1} \left ( p(u) - p(u_1)\right )du},
 \end{equation}
 where we find
 \begin{equation}
