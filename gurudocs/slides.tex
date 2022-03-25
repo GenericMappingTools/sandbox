@@ -175,6 +175,39 @@ where we find
 \bar{u}_f^o = \frac{ - 3 (u_1 - u_2) + \frac{1 - p(u_1)}{2}(u_1^2 - u_2^2) + (u_1^3 - u_2^3) - \frac{1}{5}(u_1^5 - u_2^5) - L + T}{(u_1 - u_2)(1 - p(u_1)) + \frac{3}{2}\left (u_1^2 - u_2^2\right) - \frac{1}{4}\left(u_1^4 - u_2^4\right ) - L - T}.
 \end{equation}
 
+\section{Azimuthal variation}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=5in]{slides_fig3.png}
+  \caption{A range of azimuthal variation in slide height can be achieved via the modulating power parameter $v$.}
+  \label{slides_fig3}
+\end{figure}
+
+The above derivation assumes that the slide profile $h_s(r)$ only varies with radial position and is constant as a function of the azimuth within the slide sector.
+Alternatively, we may wish to have the slide start at azimuth $\alpha_1$ at the undeformed scarp height ($h_2$) and drop down to the final level ($h_1$)
+over some azimuthal distance towards $\alpha_2$.  We model this azimuthal scaling function this way:
+\begin{equation}
+s(\alpha) = s(\gamma) = \left |\gamma\right|^v,
+\end{equation}
+which for $v = 2$ yields a parabolic function, and the normalized angle $\gamma$ on the range $\pm1$ is defined as
+\begin{equation}
+\gamma = 2\frac{\alpha - \alpha_1}{\alpha_2 - \alpha_1} - 1.
+\end{equation}
+We can use the power modulator $v > 2$ to increase the drop-off rate from the scarp. Now, the computed slide height will be a function
+of both radius and azimuth, i.e.,
+\begin{equation}
+h_s(r, \alpha) = h(r) s(\alpha) + h_s(r) (1 - s(\alpha)),
+\end{equation}
+When $v \rightarrow \infty$ then $s(\alpha) \rightarrow 0$ and we recover the original radial-variation-only slide height. For other values,
+see Figure~\ref{slides_fig3}.
+For volume calculations we must integrate over the azimuthal range, which yields
+\begin{equation}
+\bar{s} = 2\int_0^1  \gamma^v d\gamma = \frac{2}{v+1},
+\end{equation}
+since $v \ge 2$. Now, $\bar{s}$ and $1 - \bar{s}$ can be used to evaluate the actual slide volume as the weighted sum of
+the constant flank volume and the constant slide volume.
+
 \section{REFERENCES}
 
 Smith, J. R., and P. Wessel (2000), Isostatic consequences of giant landslides on the Hawaiian Ridge,
