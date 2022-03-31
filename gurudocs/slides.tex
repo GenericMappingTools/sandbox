@@ -93,13 +93,15 @@ A_d = \frac{h_c}{2} (r_d - r_0),
 we find the volume to be
 \begin{equation}
 V_d = 2 \pi \bar{r}_d A_d = 2 \pi \bar{r}_d \left [ \frac{h_c}{2} (r_d - r_0) \right ],
+\label{eq:Vd}
 \end{equation}
 where $\bar{r}_d$ is the centroid radial distance of the distal triangle and is obtained in a similar fashion to $\bar{r}_s$ (except
 we must handle the awkward initial section separately):
 \begin{equation}
-\bar{r}_d = \frac{\int_{r_c}^{r_d}h_c \left (1 - \frac{r - r_c}{r_d - r_c} \right )rdr - \int_{r_c}^{r_o}h_c \left (1 - \frac{r - r_c}{r_o- r_c} \right )rdr}{A_d}
+\bar{r}_d = \frac{\int_{r_c}^{r_d}h_c \left (1 - \frac{r - r_c}{r_d - r_c} \right )rdr - \int_{r_c}^{r_o}h_c \left (1 - \frac{r - r_c}{r_o- r_c} \right )rdr}{A_d} = \frac{r_c + r_0 + r_d}{3}.
+\label{eq:rd}
 \end{equation}
-Simplifying this expression and equating the two volumes lead to the quadratic equation
+Inserting (\ref{eq:rd}) into (\ref{eq:Vd}) and equating it to $V_s$ lead to the quadratic equation
 \begin{equation}
 r_d^2 + r_c r_d - \left (r_0^2 + r_0 r_c + \frac{3 V_s}{\pi h_c}\right ) = r_d^2 + r_c r_d - c = 0,
 \end{equation}
@@ -112,7 +114,7 @@ We may we want a slide that redeposits a certain fraction $\phi$ of the total vo
 case we will need to compute $u_0$ given the other parameters in order to match the volumes.  Using
 $V_s$ from (\ref{eq:Vs}) we set $V_s = \phi V_0$ and rearrange the equation into a form where the right-hand side is a constant:
 \begin{equation}
-\left ( r_2 + \Delta r \bar{u}_s^u \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] = \frac{V_f - \phi V_0}{2 \pi \Delta h \Delta r} - \frac{h_1}{2\Delta h}(r_1 + r_2).
+\left ( r_2 + \Delta r \bar{u}_s^u \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] = \frac{1}{2\Delta h} \left [\frac{V_f - \phi V_0}{\pi \Delta r} - h_1(r_1 + r_2) \right ].
 \end{equation}
 We then solve for $u_0$ numerically.  We note that $V_s$ cannot exceed $V_f$ so $\phi$ is limited by the other parameters.  As
 $V_s \rightarrow V_f$ we find $u_0 \rightarrow 0$.
