@@ -42,7 +42,7 @@ gmt begin slides_fig1 png
 	0.92	0.1
 	EOF
 	u0=0.1
-	gmt math -T0/1/0.01 ${u0} 1 ${u0} ADD T ${u0} ADD DIV 1 SUB MUL 0.8 0.2 SUB MUL 0.2 ADD -C0 0.84 0.36 SUB MUL 0.36 ADD = | gmt plot s.txt -Gpink -W1p
+	gmt math -T0/1/0.01 ${u0} 1 ${u0} ADD T ${u0} ADD DIV 1 SUB MUL 0.8 0.2 SUB MUL 0.2 ADD -C0 0.84 0.36 SUB MUL 0.36 ADD = | gmt plot -Gpink -W1p
 	gmt plot -Glightblue -W0.25p <<- EOF
 	0.92	0.1
 	1	0
