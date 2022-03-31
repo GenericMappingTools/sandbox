@@ -11,7 +11,7 @@
 \topmargin = -1 in
 \begin{document}
 
-\section{Model curve for a landslide in grdseamount}
+\section{Model landslides in grdseamount}
 
 \begin{figure}[h!]
   \centering
@@ -22,25 +22,24 @@
   \label{slides_fig1}
 \end{figure}
 
-These notes resurrect the work of {\it J. Smith and Wessel} (2000) on approximating large landslides off seamounts
-for the purpose of studying the isostatic consequences.  I found the old C codes and wanted to document the geometry
-better as well as implement it as a new option in grdseamount.  I refer to Figure~\ref{slides_fig1}.  The equation for the
-shape of the slide for the radial range $r_2$ to $r_1$ is given by a single equation:
+These notes expands the work of {\it J. Smith and Wessel} (2000) on approximating large landslides off seamounts
+for the purpose of studying the isostatic consequences.  I refer to Figure~\ref{slides_fig1}.  The equation for the
+cross-sectional shape of the slide for the radial range $r_2$ to $r_1$ is given by a single equation:
 \begin{equation}
 h_s(r) = h_1 + \Delta h \cdot q(u),
 \end{equation}
-where $\Delta h = h_2 - h_1$ is the \emph{height} range of the slide and $q(u)$ is the normalized shape curve of the slide:
+where $\Delta h = h_2 - h_1$ is the \emph{height} range of the rupture surface and $q(u)$ is the normalized shape curve of the slide,
 \begin{equation}
-q(u) = u_0 \left (\frac{1 + u_0}{u + u_0} - 1 \right ).
+q(u) = u_0 \left (\frac{1 + u_0}{u + u_0} - 1 \right ),
 \end{equation}
-This is basically a hyperbolic curve and we can use the tuning parameter $u_0$ to carve more or less into the seamount core,
+which is a hyperbolic curve. We use the tuning parameter $u_0$ to carve more or less deeply into the seamount core,
 which is an improvement upon the fixed scheme in {\it J. Smith and Wessel} (2000).
-Here, $u$ is the normalized distance from $r_2$ to $r_1$, and over this range $q$ goes from 1 to 0:
+Here, $u$ is the normalized distance from $r_2$ to $r_1$, given by
 \begin{equation}
-u = \frac{r-r_2}{\Delta r},
+u = \frac{r-r_2}{r_1 - r_2} = \frac{r-r_2}{\Delta r},
 \end{equation}
-where $\Delta r = r_1 - r_2$ is the \emph{radial} range of the slide.
-Figure~\ref{slides_fig2} shows the typical shapes of $q(u)$ for a range of $u_0$ values.
+where $\Delta r$ is the \emph{radial} range of the slide.
+Figure~\ref{slides_fig2} shows typical shapes of $q(u)$ for values of $u_0$.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=5in]{slides_fig2.png}
@@ -55,23 +54,36 @@ The material removed by the land slide (red hachured area)
 will be deposited at the base of the seamount (blue hachured area) up to the proximal height $h_c$.  We assume this deposit will have a linearly
 decaying height, enabling us to compute the distal radius $r_d$ from the volume of the slide, $V_s$.  Clearly $V_s$ depends
 on both $h(r)$ and $h_s(r)$.  We will compute this volume as $V_s = V_f - V_q$, where $V_f$ is the flank volume whose
-triangular (for a cone) crossection is delimited by the lines $r = r_2$, $h = h_1$ and $h(r)$.  Its area $A_f$ and centroid $\bar{r}_f$ are computed once and
+trapezoidal (for a cone) crossection is delimited by the lines $r = r_2$, $h = 0$ and $h(r)$.  Its area $A_f$ and centroid $\bar{r}_f$ are computed once and
 we then use Pappas' theorem to get the corresponding volume $V_f = 2 \pi \bar{r}_f A_f$.  For $V_s$ the upper limit is $h_s(r)$ instead of $h(r)$ so we can integrate
-$h_s(r)$ for an analytical answer. First we get the area:
+$h_s(r)$ for an analytical answer. First we get the area. To simplify we first only compute the upper part of the area, $A^u_s$ and later we add the pedestal area $A^l_s$ below $h_1$:
 \begin{equation}
-A_s = \int_{r_2}^{r_1} h_s(r) dr = \Delta h \Delta r \int_0^1 q(u) du = \Delta h \Delta r u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ].
+A^u_s = \int_{r_2}^{r_1} \Delta h q(u) dr = \Delta h \Delta r \int_0^1 q(u) du = \Delta h \Delta r u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ].
 \end{equation}
 To use Pappas' theorem for computing the volume we need the radius to the centroid, which is obtained via
 \begin{equation}
-\bar{r}_s = \frac{\int_{r_2}^{r_1}h_s(r)rdr}{\int_{r_2}^{r_1}h_s(r)dr} = r_2 + \Delta r \bar{u}_s = r_2 + \Delta r \frac{\int_0^1q(u)udu}{\int_0^1 q(u)du}.
+\bar{r}^u_s = \frac{\int_{r_2}^{r_1}q(u)rdr}{\int_{r_2}^{r_1}q(u)dr} = r_2 + \Delta r \bar{u}_s = r_2 + \Delta r \frac{\int_0^1q(u)udu}{\int_0^1 q(u)du}.
 \end{equation}
 This integral yields
 \begin{equation}
-\bar{u}_s = \frac{2(1 + u_0)\left [1 - u_0 \log \left ( \frac{1+u_0}{u_0} \right ) \right ] - 1}{(1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1}.
+\bar{u}^u_s = \frac{2(1 + u_0)\left [1 - u_0 \log \left ( \frac{1+u_0}{u_0} \right ) \right ] - 1}{(1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1}.
+\end{equation}
+The actual area under the $h_s(r)$ curve can then be written as
+\begin{equation}
+A_s = A^u_f + A^l_f = A^u_f + h_1 \Delta r.
+\end{equation}
+To compute the volume of the pedestal we also need its centroid radius:
+\begin{equation}
+\bar{r}^l_s = \frac{\int_{r_2}^{r_1} h_1 rdr}{A^l_s} = \frac{1}{2} (r_1 + r_2).
 \end{equation}
 Our final slide volume is therefore
 \begin{equation}
-V_s = V_f - 2 \pi \Delta h \Delta r \left ( r_2 + \Delta r\bar{u}_s \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ].
+V_s = V_f - 2 \pi \left (A^u_s \bar{r}^u_s + A^l_s \bar{r}^l_s \right ),
+\end{equation}
+yielding
+\begin{equation}
+V_s = V_f - 2 \pi \Delta r \left \{ \Delta h \left ( r_2 + \Delta r\bar{u}_s \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] + \frac{h_1}{2} (r_1 + r_2) \right \}.
+\label{eq:Vs}
 \end{equation}
 To solve for the distal end radius $r_d$ we need to equate the volume $V_s$ with the equivalent distal volume.
 Given that the distal triangle area\footnote{We assume that $h(r)$ from $h_c$ to zero may be approximated as a linear ramp.} is
@@ -97,13 +109,10 @@ r_d = \frac{-r_c + \sqrt{r_c^2 + 4c}}{2}.
 \end{equation}
 
 We may we want a slide that redeposits a certain fraction $\phi$ of the total volume $V_0$ of the entire seamount. In that
-case we will need to compute $u_0$ given the other parameters in order to match the volumes.  We have from above
+case we will need to compute $u_0$ given the other parameters in order to match the volumes.  Using
+$V_s$ from (\ref{eq:Vs}) we set $V_s = \phi V_0$ and rearrange this equation into the form
 \begin{equation}
-V_s = \phi V_0 = V_f - 2 \pi \Delta h \Delta r \left ( r_2 + \Delta r\bar{u}_s \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ].
-\end{equation}
-We rearrange this equation into the form
-\begin{equation}
-\left ( r_2 + \Delta r \bar{u}_s \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] = \frac{V_f - \phi V_0}{2 \pi \Delta h \Delta r}
+\left ( r_2 + \Delta r \bar{u}_s \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] = \frac{V_f - \phi V_0}{2 \pi \Delta h \Delta r} - \frac{h_1}{2\Delta h}(r_1 + r_2)
 \end{equation}
 and solve for $u_0$ numerically.  We note that $V_s$ cannot exceed $V_f$ so $\phi$ is limited by the other parameters.  As
 $V_s$ approaches $V_f$ we will get diminishing values for $u_0$.
@@ -118,63 +127,65 @@ In reporting volumes we need to scale $V_s$ by $\theta$ but the equations above 
 \section{Volumes given specific seamount shapes}
 
 In order to use Pappas' theorem to compute the flank volume $V_f = 2 \pi \bar{r}_f A_f$ we need analytical
-solutions for the various areas and centroid distances.  These are determined in this section. The superscripts
-on the left-hand side in these sections refer to the seamount shape used (c, p, g, o).
+solutions for the various areas and centroid distances.  These are determined in this section. The
+superscripts in these sections refer to the seamount shape used (c, p, g, o). In
+these calculations we redefine $u = r/r_0$ so $r = r_0 u$ and $dr = r_0 du$.  Integrations then go from $u_2$
+to $u_1$.  We let $r_0 = h_0 = 1$ and then $\bar{r}_f = r_0 \bar{u}_f$ and we must scale the area integrals $K$
+by $r_0$ and height factor (which differs for each shape) to get correct units.
 
 \subsection{Conic Seamounts}
 
-For conic seamounts we find
+For conic seamounts we use normalized height $v(u) = 1 - u$. Then
 \begin{equation}
-A_f^c = \frac{h_0 \Delta_r^2}{2 r_0 (1-f)}, \quad \bar{r}_f^c = \frac{2 r_2 + r_1}{12}.
+K^c = \int_{u_2}^{u_1} v(u) du = u_1 - u_2 - \frac{1}{2}\left ( u_1^2 - u_2^2 \right ), \quad \bar{u}_f^c = \frac{\int_{u_2}^{u_1} v(u) u du}{K^c} = \frac{3(u_1^2 - u_2^2) - 2 (u_1^3 - u_2^3)}{6K^c},
+\end{equation}.
+\begin{equation}
+A_f^c = \frac{h_0 r_0}{1-f}K^c, \quad r_f^c = r_0\bar{u}_f^c.
 \end{equation}
 
 \subsection{Parabolic Seamounts}
 
-For parabolic seamounts we find
+For parabolic seamounts we use normalized height $v(u) = 1 - u^2$. Then
 \begin{equation}
-A_f^p = \frac{h_0 \left ( r_1^3 - 3 r_1^2 r_2 + 2 r_2^3\right)}{6 r_0^2 (1-f)}, \quad \bar{r}_f^p = \frac{\left (r_1^2 - r_2^2 \right )^2}{24 \left ( r_1^3 - 3 r_1^2 r_2 + 2 r_2^3\right)}.
+K^p = \int_{u_2}^{u_1} v(u) du = u_1 - u_2 - \frac{1}{3}\left ( u_1^3 - u_2^3 \right ), \quad \bar{u}_f^p = \frac{\int_{u_2}^{u_1} v(u) u du}{K^p} = \frac{2(u_1^2 - u_2^2) - (u_1^4 - u_2^4)}{4K^p},
+\end{equation}
+\begin{equation}
+A_f^p = \frac{h_0 r_0}{1-f^2}K^p, \quad r_f^p = r_0\bar{u}_f^p.
 \end{equation}
 
 \subsection{Gaussian Seamounts}
 
-For Gaussian seamounts we find
+For Gaussian seamounts we use normalized height $v(u) = e^{-\frac{9}{2}u^2}$. Then
+
 \begin{equation}
-A_f^g = h_0 r_0 e^{\frac{9}{2}f^2} \left \{ \frac{\sqrt{2\pi}}{6} \left [\mbox{erf} \left ( \frac{3\sqrt{2}}{2}u_2\right ) - \mbox{erf} \left ( \frac{3\sqrt{2}}{2}u_1 \right ) \right ] - (u_1 - u_2)e^{-\frac{9}{2} u_1^2} \right \}.
+K^g = \int_{u_2}^{u_1} v(u) du = \frac{\sqrt{2\pi}}{6} \left [ \mbox{erf} \left (\frac{3\sqrt{2}}{2}u_1\right ) - \mbox{erf} \left (\frac{3\sqrt{2}}{2}u_2\right ) \right ],
 \end{equation}
 \begin{equation}
-\bar{r}_f^g = r_0\frac{\frac{1}{9} \left [e^{-\frac{9}{2}u_2^2} - e^{-\frac{9}{2}u_1^2} \right ] - \frac{1}{2}\left (u_1^2 - u_2^2 \right )e^{-\frac{9}{2}u_1^2}}{\frac{\sqrt{2\pi}}{6}\left [\mbox{erf} \left ( \frac{3\sqrt{2}}{2}u_2\right ) - \mbox{erf} \left ( \frac{3\sqrt{2}}{2}u_1 \right ) \right ] - (u_1 - u_2)e^{-\frac{9}{2}u_1^2}}.
+\bar{u}_f^g = \frac{\int_{u_2}^{u_1} v(u) u du}{K^g} = \frac{e^{-\frac{9}{2}u_2^2} - e^{-\frac{9}{2}u_1^2}}{9K^g},
+\end{equation}
+\begin{equation}
+A_f^g = h_0 r_0 e^{\frac{9}{2}f^2} K^g, \quad r_f^g = r_0\bar{u}_f^g.
 \end{equation}
 
 \subsection{Polynomial Seamounts}
 
-For polynomial seamounts we set the stage with the function for the shape function
-and two needed integrals which we solved in Matlab. The untruncated flank shape is
+For polynomial seamounts we use the normalized height
 \begin{equation}
-p(u) = \frac{(1 + u)^3 (1 - u)^3}{1 + u^3},
+v(u) = \frac{(1 + u)^3 (1 - u)^3}{1 + u^3}.
 \end{equation}
-while the integral related to area is
+Then,
 \begin{equation}
-\int \left ( p(u) - p(u_1)\right ) du = u \left(1 - p(u_1)\right) + \frac{3}{2}u^2 - \frac{1}{4}u^4 - \frac{3}{2} \log (u^2 - u + 1) - \sqrt{3} \tan^{-1} \left ( \frac{\sqrt{3}}{3}(2u - 1) \right),
+K^o = \int_{u_2}^{u_1} v(u) du = u_1 - u_2 + \frac{3}{2}\left (u_1^2 - u_2^2 \right ) - \frac{1}{4} \left (u_1^4 - u_2^4\right ) - L - T,
 \end{equation}
-and the integral related to the centroid is
 \begin{equation}
-\int \left ( p(u) - p(u_1)\right ) u du =  -3 u + \frac{u^2}{2}\left(1 - p(u_1)\right) +u^3 - \frac{u^5}{5} - \frac{3}{2} \log (u^2 - u + 1) + \sqrt{3}\tan^{-1} \left ( \frac{\sqrt{3}}{3}(2u - 1) \right).
-\end{equation}
-Introducing $u_1 = r_1/r_0$ and $u_2 = r_2 / r_0$ we find
-\begin{equation}
-A_f^o = \frac{h_0 r_0}{p(f)} \left \{ (u_1 - u_2)(1 - p(u_1)) + \frac{3}{2}\left (u_1^2 - u_2^2\right ) - \frac{1}{4}\left (u_1^4 - u_2^4\right ) -  L - T \right \}
+\bar{u}_f^o = \frac{\int_{u_2}^{u_1} v(u) u du}{K^o} = \frac{- 3 (u_1 - u_2) + \frac{1}{2}(u_1^2 - u_2^2) + (u_1^3 - u_2^3) - \frac{1}{5}(u_1^5 - u_2^5) - L + T}{K^o},
 \end{equation}
 where 
 \begin{equation}
 L = \frac{3}{2} \log \left ( \frac{u_1^2 - u_1 + 1}{u_2^2 - u_2 + 1}\right ), \quad T = \sqrt{3} \left [ \tan^{-1} \left (\frac{\sqrt{3}}{3}(2u_1 - 1)\right ) - \tan^{-1} \left (\frac{\sqrt{3}}{3}(2u_2 - 1)\right )\right ].
 \end{equation}
-For the centroid location we first note
 \begin{equation}
-\bar{r}_f^o = r_2 + \Delta r \bar{u}_f^o = r_2 + \Delta r \frac{\int_{u_2}^{u_1} \left ( p(u) - p(u_1)\right ) u du}{\int_{u_2}^{u_1} \left ( p(u) - p(u_1)\right )du},
-\end{equation}
-which yields
-\begin{equation}
-\bar{u}_f^o = \frac{ - 3 (u_1 - u_2) + \frac{1 - p(u_1)}{2}(u_1^2 - u_2^2) + (u_1^3 - u_2^3) - \frac{1}{5}(u_1^5 - u_2^5) - L + T}{(u_1 - u_2)(1 - p(u_1)) + \frac{3}{2}\left (u_1^2 - u_2^2\right) - \frac{1}{4}\left(u_1^4 - u_2^4\right ) - L - T}.
+A_f^o = \frac{h_0 r_0}{v(f)} K^o, \quad r_f^o = r_0\bar{u}_f^o.
 \end{equation}
 
 \section{Azimuthal variation}
@@ -207,9 +218,9 @@ For volume calculations we must integrate over the azimuthal range, which yields
 \begin{equation}
 \bar{s} = 2\int_0^1  \gamma^v d\gamma = \frac{2}{v+1},
 \end{equation}
-since $v \ge 2$. Now, $1 - \bar{s}$ can be used to evaluate the actual slide volume, i.e., we must scale the previously obtained volume:
+since $v \ge 2$. Now, $1 - \bar{s}$ can be used to evaluate the actual slide volume, i.e., we must scale the previously obtained upper slide volume:
 \begin{equation}
-V_s^' = V_f - (1 - \bar{s}) V_s.
+V_s^' = V_f - (1 - \bar{s}) V^u_s - V^l_s.
 \end{equation}
 
 \section{REFERENCES}
