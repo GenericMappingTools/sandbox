@@ -86,9 +86,9 @@ V_s = V_f - 2 \pi \Delta r \left \{ \Delta h \left ( r_2 + \Delta r\bar{u}_s^u \
 \label{eq:Vs}
 \end{equation}
 To solve for the distal radius $r_d$ we need to equate $V_s$ with the equivalent distal volume.
-Given that the distal triangle area\footnote{We assume that $h(r)$ from $h_c$ to zero may be approximated as a linear ramp.} is
+Given that the distal triangle thickness and area\footnote{We assume that $h(r)$ from $h_c$ to zero may be approximated as a linear ramp.} are
 \begin{equation}
-A_d = \frac{h_c}{2} (r_d - r_0),
+h_d(r) = h_c \left (1 - \frac{r - r_c}{r_d - r_c}\right ), \quad A_d = \frac{h_c}{2} (r_d - r_0)
 \end{equation}
 we find the volume to be
 \begin{equation}
@@ -198,7 +198,7 @@ A_f^o = \frac{h_0 r_0}{v(f)} K^o, \quad r_f^o = r_0\bar{u}_f^o.
 \begin{figure}[h!]
   \centering
   \includegraphics[width=5in]{slides_fig3.png}
-  \caption{A range of azimuthal variation in slide height can be achieved via the modulating power parameter $q$.}
+  \caption{A range of azimuthal variation in slide height can be achieved via the modulating power parameter, $p$.}
   \label{slides_fig3}
 \end{figure}
 
@@ -206,24 +206,24 @@ The above derivations assume the slide profile $h_s(r)$ only varies with radial 
 Alternatively, we may wish to have the slide start at azimuth $\alpha_1$ at the undeformed scarp height ($h(r)$) and drop down to the final level ($h_s(r)$)
 over some azimuthal distance towards $\alpha_2$.  We model this azimuthal scaling function by
 \begin{equation}
-s(\alpha) = s(\gamma) = \left |\gamma\right|^q,
+s(\alpha) = s(\gamma) = \left |\gamma\right|^p,
 \end{equation}
-which for $q = 2$ yields a parabolic function, and the normalized angle $\gamma$ on the range $\pm1$ is defined as
+which for $p = 2$ yields a parabolic function, and the normalized angle $\gamma$ on the range $\pm1$ is defined as
 \begin{equation}
 \gamma = 2\frac{\alpha - \alpha_1}{\alpha_2 - \alpha_1} - 1.
 \end{equation}
-We can use the power modulator $q \ge 2$ to increase the drop-off rate from the scarp toward the middle of the section. Now, the computed slide height will be a function
+We can use the power modulator $p \ge 2$ to increase the drop-off rate from the scarp toward the middle of the section. Now, the computed slide height will be a function
 of both radius and azimuth, i.e.,
 \begin{equation}
 h_s(r, \alpha) = h(r) s(\alpha) + h_s(r) (1 - s(\alpha)),
 \end{equation}
-When $q \rightarrow \infty$ then $s(\alpha) \rightarrow 0$ and we recover the original radial-variation-only slide height. For other values,
+When $p \rightarrow \infty$ then $s(\alpha) \rightarrow 0$ and we recover the original radial-variation-only slide height. For other values,
 see Figure~\ref{slides_fig3}.
 For volume calculations we must integrate over the azimuthal range, which yields
 \begin{equation}
-\bar{s} = 2\int_0^1  \gamma^q d\gamma = \frac{2}{q+1},
+\bar{s} = 2\int_0^1  \gamma^p d\gamma = \frac{2}{p+1},
 \end{equation}
-since $q \ge 2$. Now, $1 - \bar{s}$ can be used to evaluate the actual slide volume, i.e., we must adjust the previously obtained upper slide volume:
+since $p \ge 2$. Now, $1 - \bar{s}$ can be used to evaluate the actual slide volume, i.e., we must adjust the previously obtained upper slide volume:
 \begin{equation}
 V_s^' = V_f - (1 - \bar{s}) V^u_s - V^l_s.
 \end{equation}
