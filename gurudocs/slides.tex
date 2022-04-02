@@ -23,21 +23,20 @@
 \end{figure}
 
 We expand the work of {\it J. Smith and Wessel} (2000) on approximating large landslides off seamounts
-for the purpose of studying the isostatic consequences of the mass redistribution (Figure~\ref{slides_fig1}).  The equation for the
-cross-sectional shape of the slide for the radial range $r_2$ to $r_1$ is given by a single equation:
+for the purpose of studying the isostatic consequences of the mass redistribution (Figure~\ref{slides_fig1}).  We model the
+cross-sectional shape of the slide over the radial range $r_2$ to $r_1$ by
 \begin{equation}
-h_s(r) = h_1 + \Delta h \cdot q(u),
+h_s(r) = h_1 + \Delta h \cdot q(r),
 \end{equation}
-where $\Delta h = h_2 - h_1$ is the \emph{height} range of the rupture surface and $q(u)$ is the normalized shape curve of the slide,
+where $\Delta h = h_2 - h_1$ is the \emph{escarpment} height of the rupture and $q(u)$ is the normalized shape curve of the slide,
 \begin{equation}
 q(u) = u_0 \left (\frac{1 + u_0}{u + u_0} - 1 \right ),
 \end{equation}
-which is a hyperbolic curve. We use the tuning parameter $u_0$ to carve more or less deeply into the seamount core.
-Here, $u$ is the normalized distance from $r_2$ to $r_1$, given by
+i.e., a hyperbolic curve.  Here, $u$ is the normalized distance from $r_2$ to $r_1$, given by
 \begin{equation}
 u = \frac{r-r_2}{r_1 - r_2} = \frac{r-r_2}{\Delta r}, \quad \mbox{hence } r = r_2 + u \Delta r,
 \end{equation}
-where $\Delta r$ is the \emph{radial} range of the slide.
+where $\Delta r$ is the \emph{radial} range of the slide. We modify the parameter $u_0$ to carve more or less deeply into the seamount core.
 Figure~\ref{slides_fig2} shows typical shapes of $q(u)$ for some values of $u_0$.
 \begin{figure}[h!]
   \centering
@@ -51,28 +50,23 @@ Depending on the shape of the seamount prior to the slide event (called $h(r)$, 
 to in Figure \ref{slides_fig1}, such as $r_1$, $r_2$, $r_c$, and $r_d$ from their corresponding heights $h_1$, $h_2$, $h_c$ and volume of slide.
 The material removed by the land slide (pink)
 will be deposited at the base of the seamount (light blue) starting from the proximal height $h_c$.  We assume this deposit will have a linearly
-decaying height, enabling us to compute the distal radius $r_d$ from the volume of the slide, $V_s$.  Clearly $V_s$ depends
+decaying height, enabling us to compute the distal radius $r_d$ from the volume of the slide, $V_s$.  Clearly, $V_s$ depends
 on both $h(r)$ and $h_s(r)$.  We will compute this volume as $V_s = V_f - V_q$, where $V_f$ is the fixed flank volume whose
 trapezoidal (for a cone) crossection is delimited by the lines $r = r_2$, $h = 0$ and $h(r)$.  Its area $A_f$ and centroid $\bar{r}_f$ are computed and
-we then use Pappas' theorem to get the corresponding volume $V_f = 2 \pi \bar{r}_f A_f$.  For $V_q$, the upper limit is $h_s(r)$ instead of $h(r)$ and we can integrate
-$h_s(r)$ for an analytical answer. To simplify, we first only compute the upper part of the area, $A^u_q$ (light gray area)
+we then use Pappas' theorem to get the corresponding volume $V_f = 2 \pi \bar{r}_f A_f$.  For $V_q$, the upper limit is $h_s(r)$ instead. We first compute the upper part of the area, $A^u_q$ (light gray area)
 and later we will add the pedestal area $A^l_q$ below $h_1$ (darker gray area):
 \begin{equation}
 A^u_q = \int_{r_2}^{r_1} \Delta h q(r) dr = \Delta h \Delta r \int_0^1 q(u) du = \Delta h \Delta r u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ].
 \end{equation}
-To use Pappas' theorem we need the radius to the centroid, which is obtained via
+To use Pappas' theorem we need the radius to the centroid, obtained via
 \begin{equation}
 \bar{r}^u_q = \frac{\int_{r_2}^{r_1}q(r)rdr}{\int_{r_2}^{r_1}q(r)dr} = r_2 + \Delta r \bar{u}_q^u = r_2 + \Delta r \frac{\int_0^1q(u)udu}{\int_0^1 q(u)du}.
 \end{equation}
 This ratio of integrals yields
 \begin{equation}
-\bar{u}^u_q = \frac{2(1 + u_0)\left [1 - u_0 \log \left ( \frac{1+u_0}{u_0} \right ) \right ] - 1}{(1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1}.
+\bar{u}^u_q = \frac{(1 + u_0)\left [1 - u_0 \log \left ( \frac{1+u_0}{u_0} \right ) \right ] - \frac{1}{2}}{(1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1}.
 \end{equation}
-The actual area under $h_s(r)$ can then be written
-\begin{equation}
-A_q = A^u_q + A^l_q =  \Delta r \left \{\Delta h u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] + h_1 \right \}.
-\end{equation}
-To compute the volume of the pedestal we also need its centroid radius:
+To compute the volume of the pedestal we need its area $A^l_q = \Delta r h_1$ and centroid radius
 \begin{equation}
 \bar{r}^l_q = \frac{ h_1\int_{r_2}^{r_1} rdr}{A^l_q} = \frac{1}{2} (r_1 + r_2).
 \end{equation}
