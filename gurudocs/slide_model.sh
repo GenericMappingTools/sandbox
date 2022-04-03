@@ -1,6 +1,6 @@
 #!/bin/bash
 # Makes fig1 in slides.tex
-gmt begin slides_fig1 png
+gmt begin slides_model png
 	gmt set GMT_THEME cookbook
 	gmt plot -R0/2.6/0/1.3 -Jx1.6i/1i -W1p <<- EOF
 	0	1

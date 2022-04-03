@@ -15,15 +15,15 @@
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=5in]{slides_fig1.png}
+  \includegraphics[width=5in]{slides_model.png}
   \caption{Geometry for an \emph{ad hoc} landslide approximation in \texttt{grdseamount}.  The slide material (pink)
   will be deposited at the toe of the seamount (light blue) starting at a height of $h_c$ and linearly
   tapering to zero at a distal point $r_d$. Note that $h_2 > h_1$ while $r_1 > r_2$.}
-  \label{slides_fig1}
+  \label{slides_model}
 \end{figure}
 
 We expand the work of {\it J. Smith and Wessel} (2000) on approximating large landslides off seamounts
-for the purpose of studying the isostatic consequences of the mass redistribution (Figure~\ref{slides_fig1}).  We model the
+for the purpose of studying the isostatic consequences of the mass redistribution (Figure~\ref{slides_model}).  We model the
 cross-sectional shape of the slide over the radial range $r_2$ to $r_1$ by
 \begin{equation}
 h_s(r) = h_1 + \Delta h \cdot q(r),
@@ -37,17 +37,17 @@ i.e., a hyperbolic curve.  Here, $u$ is the normalized distance from $r_2$ to $r
 u = \frac{r-r_2}{r_1 - r_2} = \frac{r-r_2}{\Delta r}, \quad \mbox{hence } r = r_2 + u \Delta r,
 \end{equation}
 where $\Delta r$ is the \emph{radial} range of the slide. We modify the parameter $u_0$ to carve more or less deeply into the seamount core.
-Figure~\ref{slides_fig2} shows typical shapes of $q(u)$ for some values of $u_0$.
+Figure~\ref{slides_shape} shows typical shapes of $q(u)$ for some values of $u_0$.
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=5in]{slides_fig2.png}
+  \includegraphics[width=5in]{slides_shape.png}
   \caption{A variety of slide shapes are possible by varying $u_0$.  The slide area for a conical seamount would be the area
   between the flank (dashed line) and the selected curve. A smaller $u_0$ will cut more deeply into the seamount.}
-  \label{slides_fig2}
+  \label{slides_shape}
 \end{figure}
 
 Depending on the shape of the seamount prior to the slide event (called $h(r)$, with $h_s(r) \le h(r)$), we will need to compute the various radii referred
-to in Figure \ref{slides_fig1}, such as $r_1$, $r_2$, $r_c$, and $r_d$ from their corresponding heights $h_1$, $h_2$, $h_c$ and volume of slide.
+to in Figure \ref{slides_model}, such as $r_1$, $r_2$, $r_c$, and $r_d$ from their corresponding heights $h_1$, $h_2$, $h_c$ and volume of slide.
 The material removed by the land slide (pink)
 will be deposited at the base of the seamount (light blue) starting from the proximal height $h_c$.  We assume this deposit will have a linearly
 decaying height, enabling us to compute the distal radius $r_d$ from the volume of the slide, $V_s$.  Clearly, $V_s$ depends
@@ -118,11 +118,21 @@ $V_s \rightarrow V_f$ we find $u_0 \rightarrow 0$.
 
 \subsection{Evolution of a slide over time}
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=5in]{slides_psi.png}
+  \caption{We can control how quickly a slide happens by manipulating the $\psi(\tau)$ function. A
+  linear curve means the mass redistribution is taking place at a constant rate during the slide duration.
+  Adjust $\beta$ to have the bulk of the redistribution happen at the front ($\beta < 1$) or closer
+  to the end ($\beta > 1$).}
+  \label{slides_psi}
+\end{figure}
+
 The above results discuss the final shape of topography after a slide has occurred.  However, for time-series analysis
 we will also need to look at intermediate stages.  This brings up a few further adjustments. We will assume that a
 slide starts at $t_0$ and completes by $t_1$.  We will introduce $\psi(\tau) = \tau^\beta$ as the normalized volume fraction of the slide
 as a function of normalized time $\tau = (t - t_0)/(t_1 - t_0)$.  Hence, $\psi(0) = 0$ and $\psi(1) = 1$ and
-in between we require it to be a monotonically increasing curve (e.g., linear ($\beta = 1$)).  This means that, for some time $t$, the actual
+in between we require it to be a monotonically increasing curve (e.g., linear ($\beta = 1$); see Figure~\ref{slides_psi}).  This means that, for some time $t$, the actual
 volume is the fraction $\psi(t)$ of the final slide volume $V_{s_0}$. Because our radial slide function $h_s(r)$ starts at the top scarp ($h_2$) and
 ends at the bottom ($h_1$) we realize that to compute a slide with a reduced volume given by $\psi(t)$ we must
 recompute the $u_0$ value initially assigned via (\ref{eq:u0}). There are two separate cases to consider:
@@ -134,8 +144,9 @@ recompute the $u_0$ value initially assigned via (\ref{eq:u0}). There are two se
   again use $\phi = \phi_0 \psi(t)$ to compute the changing $u_0$ parameter.
 \end{enumerate}
 At each time step we must therefore recompute the distal radius $r_d$ but keep the start of the toe deposit at $h_c$.
+
 \subsection{Sectoral volumes}
-Most slides do not involve the entire seamount, but instead only affects a limited sector of it.  Thus, our slide sector may be specified by two
+Most slides do not involve the entire seamount, of course. Instead, they only affect a limited sector of it.  Thus, our slide sector may be specified by two
 azimuths $\alpha_1$ and $\alpha_2$ and the slide will only affect that part of the seamount with a volume fraction
 \begin{equation}
 \theta = \frac{\alpha_2 - \alpha_1}{360}.
@@ -146,11 +157,11 @@ In reporting volumes we need to scale $V_s$ by $\theta$, but the equations above
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=5in]{slides_fig3.png}
+  \includegraphics[width=5in]{slides_azim.png}
   \caption{A range of azimuthal variation in slide height can be achieved by modulating the power parameter, $p$. This variation
   means the slide volume is reduced by $1 - \bar{s}$ (dashed lines). E.g., for $p = 2$ the slide volume is only 67\% of the
   volume we would have if there was no azimuthal variation (i.e., $s = 0$).}
-  \label{slides_fig3}
+  \label{slides_azim}
 \end{figure}
 
 The above derivations assume the slide profile $h_s(r)$ only varies with radial position and is constant as a function of the azimuth within the slide sector.
@@ -169,7 +180,7 @@ of both radius and azimuth, i.e.,
 h_s(r, \alpha) = h(r) s(\alpha) + h_s(r) (1 - s(\alpha)),
 \end{equation}
 When $p \rightarrow \infty$ then $s(\alpha) \rightarrow 0$ and we recover the original radial-variation-only slide height. For other values,
-see Figure~\ref{slides_fig3}.
+see Figure~\ref{slides_azim}.
 For volume calculations we must integrate over the azimuthal range, which yields
 \begin{equation}
 \bar{s} = \int_0^1  \gamma^p d\gamma = \frac{1}{p+1},
@@ -178,7 +189,7 @@ since $p \ge 2$. Now, $1 - \bar{s}$ can be used to evaluate the actual slide vol
 \begin{equation}
 V_s^' = (1 - \bar{s}) V_s = (1 - \bar{s}) \left (V_f - V^u_q - V^l_q \right).
 \end{equation}
-On the other hand, if specific slide volume fractions are requested then we need to scale $\phi_0$ by $1/(1 - \bar(s))$ so that the
+On the other hand, if specific slide volume fractions are requested then we need to scale $\phi_0$ by $1/(1 - \bar{s})$ so that the
 volume reduction due to $s(\alpha)$ is exactly counter-balanced by the increase in requested volume.
 
 \section{Volumes given specific seamount shapes}
