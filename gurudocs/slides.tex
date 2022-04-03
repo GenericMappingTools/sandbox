@@ -42,7 +42,7 @@ Figure~\ref{slides_fig2} shows typical shapes of $q(u)$ for some values of $u_0$
   \centering
   \includegraphics[width=5in]{slides_fig2.png}
   \caption{A variety of slide shapes are possible by varying $u_0$.  The slide area for a conical seamount would be the area
-  between the flank (dashed line) and the selected curve.}
+  between the flank (dashed line) and the selected curve. A smaller $u_0$ will cut more deeply into the seamount.}
   \label{slides_fig2}
 \end{figure}
 
@@ -106,11 +106,11 @@ r_d = \frac{-r_c + \sqrt{r_c^2 + 4c}}{2}.
 
 \subsection{Specify the slide volume}
 
-We may we want a slide that redeposits a certain fraction $\phi_0$ of the total volume $V_0$ of the entire seamount. In that
-case we will need to compute $u_0$ given the other parameters in order to match the volumes.  Using
-$V_s$ from (\ref{eq:Vs}) we set $V_s = \phi_0 V_0$ and rearrange the equation into a form where the right-hand side is a constant:
+We may we want a slide that redeposits a certain fraction $\phi_0$ of the total volume $V_0$ of the entire seamount, or
+a specific volume $V$. In that case we will need to compute $u_0$ given the other parameters in order to match the volumes.  Using
+$V_s$ from (\ref{eq:Vs}) we set $V_s = \phi_0 V_0$ (or to the given $V$) and rearrange the equation into a form where the right-hand side is a constant:
 \begin{equation}
-\left ( r_2 + \Delta r \bar{u}_s^q \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] = \frac{1}{2\Delta h} \left [\frac{V_f - \phi_0 V_0}{\pi \Delta r} - h_1(r_1 + r_2) \right ].
+\left ( r_2 + \Delta r \bar{u}_s^q \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] = \frac{1}{2\Delta h} \left [\frac{V_f - V_s}{\pi \Delta r} - h_1(r_1 + r_2) \right ].
 \label{eq:u0}
 \end{equation}
 We then solve for $u_0$ numerically.  We note that $V_s$ cannot exceed $V_f$ so $\phi_0$ is limited by the other parameters.  As
@@ -120,16 +120,16 @@ $V_s \rightarrow V_f$ we find $u_0 \rightarrow 0$.
 
 The above results discuss the final shape of topography after a slide has occurred.  However, for time-series analysis
 we will also need to look at intermediate stages.  This brings up a few further adjustments. We will assume that a
-slide starts at $t_0$ and completes by $t_1$.  We will introduce $\psi(\tau)$ as the normalized volume fraction of the slide
+slide starts at $t_0$ and completes by $t_1$.  We will introduce $\psi(\tau) = \tau^\beta$ as the normalized volume fraction of the slide
 as a function of normalized time $\tau = (t - t_0)/(t_1 - t_0)$.  Hence, $\psi(0) = 0$ and $\psi(1) = 1$ and
-in between we require it to be a monotonically increasing curve (e.g., linear).  This means that, for some time $t$, the actual
-volume is the fraction $\psi(t)$ of the final volume. Because our radial slide function $h_s(r)$ starts at the top scarp ($h_2$) and
+in between we require it to be a monotonically increasing curve (e.g., linear ($\beta = 1$)).  This means that, for some time $t$, the actual
+volume is the fraction $\psi(t)$ of the final slide volume $V_{s_0}$. Because our radial slide function $h_s(r)$ starts at the top scarp ($h_2$) and
 ends at the bottom ($h_1$) we realize that to compute a slide with a reduced volume given by $\psi(t)$ we must
 recompute the $u_0$ value initially assigned via (\ref{eq:u0}). There are two separate cases to consider:
 \begin{enumerate}
   \item If a specific final landslide volume has been prescribed via $\phi_0$ then for time $t$ we simply use $\phi = \phi_0 \psi(t)$
   when computing $u_0$.
-  \item If instead the final landslide volume is \emph{not} set but we provided parameters such as $u_0$, then we first need to determine
+  \item If instead the final landslide volume is \emph{not} set but we provided initial parameters such as $u_0$, then we first need to determine
   what the final slide volume $V_{s_0}$ would be from (\ref{eq:Vs}), then assign the equivalent volume fraction  $\phi_0 = V_{s_0}/V_0$, and
   again use $\phi = \phi_0 \psi(t)$ to compute the changing $u_0$ parameter.
 \end{enumerate}
@@ -147,7 +147,7 @@ In reporting volumes we need to scale $V_s$ by $\theta$, but the equations above
 \begin{figure}[h!]
   \centering
   \includegraphics[width=5in]{slides_fig3.png}
-  \caption{A range of azimuthal variation in slide height can be achieved via the modulating power parameter, $p$. This variation
+  \caption{A range of azimuthal variation in slide height can be achieved by modulating the power parameter, $p$. This variation
   means the slide volume is reduced by $1 - \bar{s}$ (dashed lines). E.g., for $p = 2$ the slide volume is only 67\% of the
   volume we would have if there was no azimuthal variation (i.e., $s = 0$).}
   \label{slides_fig3}
@@ -159,7 +159,7 @@ over some azimuthal distance towards $\alpha_2$.  We model this azimuthal scalin
 \begin{equation}
 s(\alpha) = s(\gamma) = \left |\gamma\right|^p,
 \end{equation}
-which for $p = 2$ yields a parabolic function, and the normalized angle $\gamma$ on the range $\pm1$ is defined as
+which, for $p = 2$, yields a parabolic function. The normalized angle $\gamma$ over the range $\pm1$ is defined as
 \begin{equation}
 \gamma = 2\frac{\alpha - \alpha_1}{\alpha_2 - \alpha_1} - 1.
 \end{equation}
@@ -183,7 +183,7 @@ volume reduction due to $s(\alpha)$ is exactly counter-balanced by the increase 
 
 \section{Volumes given specific seamount shapes}
 
-In order to use Pappas' theorem to compute the flank volume $V_f = 2 \pi \bar{r}_f A_f$ we need analytical
+In order to use Pappas' theorem for computing the flank volume $V_f = 2 \pi \bar{r}_f A_f$ we need analytical
 solutions for the various areas and centroid distances, which depend on the seamount shape model.  The
 superscripts below refer to the shape used (c, p, g, or o). Here,
 we redefine $u = r/r_0$ so $r = r_0 u$ and $dr = r_0 du$.  Integrations still go from $u_2$
