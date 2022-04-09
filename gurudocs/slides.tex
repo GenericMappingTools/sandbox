@@ -160,7 +160,7 @@ In reporting volumes we need to scale $V_s$ by $\theta$, but the equations above
   \includegraphics[width=5in]{slides_azim.png}
   \caption{A range of azimuthal variation in slide height can be achieved by modulating the power parameter, $p$. This variation
   means the slide volume is reduced by $1 - \bar{s}$ (dashed lines). E.g., for $p = 2$ the slide volume is only 67\% of the
-  volume we would have if there was no azimuthal variation (i.e., $s = 0$).}
+  volume we would have if there was no azimuthal variation (i.e., $s = 1$).}
   \label{slides_azim}
 \end{figure}
 
@@ -168,28 +168,28 @@ The above derivations assume the slide profile $h_s(r)$ only varies with radial 
 Alternatively, we may wish to have the slide start at azimuth $\alpha_1$ at the undeformed scarp height ($h(r)$) and drop down to the final level ($h_s(r)$)
 over some azimuthal distance towards $\alpha_2$.  We model this azimuthal scaling function by
 \begin{equation}
-s(\alpha) = s(\gamma) = \left |\gamma\right|^p,
+s(\alpha) = s(\gamma) = 1 - \left |\gamma\right|^p,
 \end{equation}
-which, for $p = 2$, yields a parabolic function. The normalized angle $\gamma$ over the range $\pm1$ is defined as
+which, for $p = 2$, yields a concave parabolic function. The normalized angle $\gamma$ over the range $\pm1$ is defined as
 \begin{equation}
 \gamma = 2\frac{\alpha - \alpha_1}{\alpha_2 - \alpha_1} - 1.
 \end{equation}
 We can use the power modulator $p \ge 2$ to increase the drop-off rate from the scarp toward the middle of the section. Now, the computed slide height will be a function
 of both radius and azimuth, i.e.,
 \begin{equation}
-h_s(r, \alpha) = h(r) s(\alpha) + h_s(r) (1 - s(\alpha)),
+h_s(r, \alpha) = h(r) \left [1 - s(\alpha)\right ] + h_s(r) s(\alpha),
 \end{equation}
-When $p \rightarrow \infty$ then $s(\alpha) \rightarrow 0$ and we recover the original radial-variation-only slide height. For other values,
+When $p \rightarrow \infty$ then $s(\alpha) \rightarrow 1$ and we recover the original radial-variation-only slide height. For other values,
 see Figure~\ref{slides_azim}.
 For volume calculations we must integrate over the azimuthal range, which yields
 \begin{equation}
-\bar{s} = \int_0^1  \gamma^p d\gamma = \frac{1}{p+1},
+\bar{s} = \int_0^1  \gamma^p d\gamma = \frac{p}{p+1},
 \end{equation}
-since $p \ge 2$. Now, $1 - \bar{s}$ can be used to evaluate the actual slide volume, i.e., we must adjust the previously obtained slide volume:
+since $p \ge 2$. Now, $\bar{s}$ can be used to evaluate the actual slide volume, i.e., we must adjust the previously obtained slide volume:
 \begin{equation}
-V_s^' = (1 - \bar{s}) V_s = (1 - \bar{s}) \left (V_f - V^u_q - V^l_q \right).
+V_s^' = \bar{s} V_s = \bar{s} \left (V_f - V^u_q - V^l_q \right).
 \end{equation}
-On the other hand, if specific slide volume fractions are requested then we need to scale $\phi_0$ by $1/(1 - \bar{s})$ so that the
+On the other hand, if specific slide volume fractions are requested then we need to scale $\phi_0$ by $1/\bar{s}$ so that the
 volume reduction due to $s(\alpha)$ is exactly counter-balanced by the increase in requested volume.
 
 \section{Volumes given specific seamount shapes}
@@ -258,6 +258,42 @@ Hence,
 \begin{equation}
 A_f^o = \frac{h_0 r_0}{v(f)} K^o, \quad r_f^o = r_0\bar{u}_f^o.
 \end{equation}
+
+\subsection{Special corner cases}
+
+The radial slide function $q(u)$ can, for $u_0 \rightarrow \infty$ get close to a straight line and thus is a perfect
+initial starting shape for a slide off a conic seamount.  However, other seamount shapes are not linear over the range where the slide
+occurs, and hence there is a specific amount of volume between the limiting straight $q(u)$ curve and the undeformed seamount
+flank $h(r)$; we call this volume $V_m^w$ and it is a function of the seamount shape $w$.  For the cone it is identically zero.
+In general, the surplus or deficit volume is
+\begin{equation}
+V_m^w = V_f^w - V_f^c,
+\end{equation}
+where seamount shape $w$ is one of (c, p, g, or o).  By examining if the shapes of these seamounts are convex or concave
+we see that $V_m^p > 0$, $V_m^c = 0$, and both $V_m^g < 0$ and $V_m^o < 0$. This does not matter in the case where we
+specify the parameter $u_0$ since we do not place any limit on the volume itself (there may be, however, a limit on
+how large a $u_0$ we can prescribe). Instead, these volume differences are tied to cases where a specific slide volume is requested:
+
+\begin{itemize}
+  \item For the parabolic shape with a volume surplus, even a value of $u_0 = \infty$ (no slide yet) will still
+  produce a slide volume $V_s$ since the curve $q(u$) is below the flank.  This means we cannot model very small-volume
+  slides beneath the $V_m^p$ limit using our $q(u)$ model. In effect, the slide volume starts at $V_m^p$ and grows from there.
+  Consequently, there is a finite lower limit on $\phi$ that we must exceed.  We will develop a fix below.
+  \item For the two shapes with volume deficits, initially large values of $u_0$ will not actually result in any slide
+  volume $V_s$ since the curve $q(u$) is still outside the flank. This means $u_0$ has to increase to a certain level
+  before we get a positive slide volume. Consequently, there is a finite upper limit on $u_0$ value that we cannot exceed.
+\end{itemize}
+
+For time-series simulation we compute volume fractions via $\psi(\tau)$, and in the first case those fractions may
+be too small for early time-steps to allow us to solve for $u_0$. For these parabolic seamounts with slide fractions
+that cannot be modeled via $u_0$, we can do this: Let $\eta = V_s(t)/V_m^p < 1$ be the fraction of the volume and use it to move
+$h_s(r)$ \emph{outward} towards $h(r)$:
+\begin{equation}
+h_s(r) = h_c(r) + \eta \left [h(r) - h_c(r) \right ],
+\end{equation}
+where $h_c(r)$ is the straight line between $(r_1, h_1)$ and $(r_2, h_2)$.  This will let us effectively carve out
+those smaller volumes that otherwise cannot be done via $u_0$.  The second case is not really a problem since there is
+always a $u_0$ we can solve for.
 
 \section{REFERENCES}
 
