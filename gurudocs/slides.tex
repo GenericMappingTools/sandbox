@@ -104,17 +104,26 @@ with unique solution
 r_d = \frac{-r_c + \sqrt{r_c^2 + 4c}}{2}.
 \end{equation}
 
+\subsection{Sectoral volumes}
+Most slides do not involve the entire seamount, of course. Instead, they only affect a limited sector of it.  Thus, our slide sector may be specified by two
+azimuths $\alpha_1$ and $\alpha_2$ and the slide will only affect that part of the seamount with a volume fraction
+\begin{equation}
+\theta = \frac{\alpha_2 - \alpha_1}{360}.
+\end{equation}
+In reporting volumes we therefore need to scale $V_s$ by $\theta$, but the equations above for balancing volumes are not affected since $\theta$ cancels from both sides of the equations.
+However, $\theta$ will enter in the next section when a specific volume is requested.
+
 \subsection{Specify the slide volume}
 
 We may we want a slide that redeposits a certain fraction $\phi_0$ of the total volume $V_0$ of the entire seamount, or
-a specific volume $V$. In that case we will need to compute $u_0$ given the other parameters in order to match the volumes.  Using
-$V_s$ from (\ref{eq:Vs}) we set $V_s = \phi_0 V_0$ (or to the given $V$) and rearrange the equation into a form where the right-hand side is a constant:
+a specific volume $V$. In that case we will need to compute $u_0$ given the other parameters in order to match the volumes.  Using equation (\ref{eq:Vs})
+for $V_s$ we equate it to $\phi_0 V_0$ (or to a specified volume) and rearrange the equation into a form where the right-hand side is independent of $u_0$:
 \begin{equation}
-\left ( r_2 + \Delta r \bar{u}_s^q \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] = \frac{1}{2\Delta h} \left [\frac{V_f - V_s}{\pi \Delta r} - h_1(r_1 + r_2) \right ].
+\left ( r_2 + \Delta r \bar{u}_s^q \right ) u_0 \left [ (1 + u_0) \log \left (\frac{1 + u_0}{u_0} \right ) - 1 \right ] = \frac{1}{2\Delta h} \left [\frac{V_f - V_s/\theta}{\pi \Delta r} - h_1(r_1 + r_2) \right ].
 \label{eq:u0}
 \end{equation}
-We then solve for $u_0$ numerically.  We note that $V_s$ cannot exceed $V_f$ so $\phi_0$ is limited by the other parameters.  As
-$V_s \rightarrow V_f$ we find $u_0 \rightarrow 0$.
+Note we scale $V_s$ to a full 360-range since that is the limit used for the other volume fractions.  We then solve for $u_0$ numerically.
+We note that $V_s/\theta$ cannot exceed $V_f$ so $\phi_0$ is limited by the other parameters.  As $V_s \rightarrow V_f$ we find $u_0 \rightarrow 0$.
 
 \subsection{Evolution of a slide over time}
 
@@ -144,14 +153,6 @@ recompute the $u_0$ value initially assigned via (\ref{eq:u0}). There are two se
   again use $\phi = \phi_0 \psi(t)$ to compute the changing $u_0$ parameter.
 \end{enumerate}
 At each time step we must therefore recompute the distal radius $r_d$ but keep the start of the toe deposit at $h_c$.
-
-\subsection{Sectoral volumes}
-Most slides do not involve the entire seamount, of course. Instead, they only affect a limited sector of it.  Thus, our slide sector may be specified by two
-azimuths $\alpha_1$ and $\alpha_2$ and the slide will only affect that part of the seamount with a volume fraction
-\begin{equation}
-\theta = \frac{\alpha_2 - \alpha_1}{360}.
-\end{equation}
-In reporting volumes we need to scale $V_s$ by $\theta$, but the equations above for balancing volumes are not affected since $\theta$ cancels from both sides of the equations.
 
 \subsection{Azimuthal variation in slide shape}
 
