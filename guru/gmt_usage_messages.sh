@@ -28,14 +28,18 @@ EOF
 cat << EOF > /tmp/count.c
 #include <stdio.h>
 int main () {
-	int o = 0, c = 0, L;
+	int o = 0, c = 0, a = 0, b = 0, L;
 	while ((L = getchar()) != EOF) {
 		if (L == '[') o++;
 		if (L == ']') c++;
+		if (L == '<') a++;
+		if (L == '>') b++;
 		if (L == '\n') {
 			if (o != c)
-				printf ("\t CHECK!");
-			o = c = 0;
+				printf ("\t CHECK []");
+			if (a != b)
+				printf ("\t CHECK <>");
+			o = c = a = b = 0;
 		}
 		putchar (L);
 	}
