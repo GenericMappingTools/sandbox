@@ -12,7 +12,7 @@ while (go == 1)
 	%fprintf (stderr, "%d prev_u0 = %lg u0 = %lg du = %lg\n", n_iter, prev_u0, u0, du);
 	prev_u0 = w * u0 + (1.0 - w) * prev_u0;
 	n_iter = n_iter + 1;
-	if (du > GMT_CONV12_LIMIT && n_iter < MAX_ITERATIONS)
+	if (du < GMT_CONV12_LIMIT || n_iter == MAX_ITERATIONS)
         go = 0;
     end
 end
