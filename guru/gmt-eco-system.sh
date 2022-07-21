@@ -18,9 +18,10 @@ gmt begin gmt-eco-system png
 	-0.98	0.98
 	EOF
 	# Place logo without label
-	gmt logo -DjCT+w1.9i+o0/0.05i -Sn
+	gmt logo -DjCT+w1.5i+o0/0.05i -Sn
 	# Add label and purpose
-	echo " 0 0.15 generic-mapping-tools.org" | gmt text -F+f10p,Helvetica-Bold
+	echo " 0 0.25 THE GMT ECOSYSTEM" | gmt text -F+f12p,Helvetica-Bold
+	echo " 0 0.10 generic-mapping-tools.org" | gmt text -F+f6p,Helvetica
 	echo " 0 -0.01 Data Processing \035 Plots \035 Animations" | gmt text -F+f8.5p,Times-Italic
 	# Separating line
 	gmt plot -W0.5p <<- EOF
