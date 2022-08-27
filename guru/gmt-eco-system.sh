@@ -35,9 +35,9 @@ gmt begin gmt-eco-system png
 	-0.65 -0.22 CMD
 	-0.65 -0.4 JULIA
 	-0.65 -0.58 MATLAB
-	0.65 -0.22 OCTAVE
+	0.65 -0.22 SHELL
 	0.65 -0.4 PYTHON
-	0.65 -0.58 SHELL
+	0.65 -0.58 OCTAVE
 	EOF
 	# OS supported
 	echo "Linux \031 macOS \031 Windows" | gmt text -F+cBC+f8p,Helvetica-Bold,navy -Dj0/0.18i
