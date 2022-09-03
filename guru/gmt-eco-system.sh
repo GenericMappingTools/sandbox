@@ -22,7 +22,7 @@ gmt begin gmt-eco-system png
 	# Add label and purpose
 	echo " 0 0.29 generic-mapping-tools.org" | gmt text -F+f6p,Helvetica-Bold,92/102/132
 	echo " 0 0.14 Data Processing \035 Plots \035 Animations" | gmt text -F+f8.5p,Times-Italic,92/102/132
-	echo " 0 0 Multi-platform \035  Multi-language" | gmt text -F+f8.5p,Times-Italic,92/102/132
+	echo " 0 0 Multi-Platform \035  Multi-Language" | gmt text -F+f8.5p,Times-Italic,92/102/132
 	# Separating line
 	gmt plot -W0.5p <<- EOF
 	-0.95	-0.12
