@@ -8,7 +8,7 @@
 # 5. List all the environments it can be used in
 # 6. Indicate NSF support
 
-gmt begin gmt-eco-system png
+gmt begin gmt-eco-system png E600
 	# Thick primary and thin secondary frame with very light fill
 	gmt basemap -R-1/1/-1/1 -Jx1i -B0 -B+gseashell  --MAP_FRAME_PEN=1p
 	gmt plot -W0.25p -L <<-EOF
