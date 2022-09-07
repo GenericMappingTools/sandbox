@@ -1,3 +1,5 @@
 **/*.aux
 **/*.log
 **/*.png
+.DS_Store
+guru/*.pdf
