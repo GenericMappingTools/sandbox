@@ -25,7 +25,13 @@ rm -rf /tmp/suppl
 mkdir -p /tmp/suppl
 mkdir -p ${SRC}/longopt
 
-gmt --show-classic > /tmp/modules.lis	# List of all core and supplemental modules
+gmt --show-classic > /tmp/modules.lis	# List of all core and supplemental modules using file names
+cat << EOF >> /tmp/modules.lis	# Append new modules with parse function not included in show-classic
+inset
+subplot
+gmtread
+gmtwrite
+EOF
 while read module; do	# Process each module separately
 	file=$(find src -name ${module}.c)	# Find the source C file
 	# Get upper case name of module
