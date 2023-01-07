@@ -158,7 +158,7 @@ However, the original surface implementation does \emph{not} honor the swapping 
 2 and 4.  This means the current surface implementation introduces subtle distortions in the grid at about half
 the nodes with data constraints.
 
-\section{Determine $C_{00}$ using interpolating biquadratic}
+\section{Determine $C_{00}$ using interpolating biquadratic (not coded)}
 
 SW90 used a 2-D Taylor expansion from the center node to the off-node data constraint E
 and 4 other nodes in order to include data constraints into the finite difference solution.
@@ -169,7 +169,7 @@ An alternative approach to incorporating off-node data constraints is fitting a 
 \end{equation}
 to the nearest 8 nodes plus the single data constraint in the vicinity of ($0,0$).  Using the nodes 
 \{NW, N1, NE, W1, E1, SW, S1, SE \} relative to the center node we obtain the following matrix equation
-for the 9 unknown coefficients $c_k$ defining the exact interpolation for quadrant 1:
+for the 9 unknown coefficients $c_k$ defining the exact biquadratic interpolation for quadrant 1:
 \begin{equation}
 \left[ {\begin{array}{*{20}{c}}
 1&{ - 1}&1&{ - 1}&1&1&1&{ - 1}&1\\
@@ -267,5 +267,15 @@ z_{00} = \frac{1}{2(1+\alpha^4)} \{ 2(1+\alpha^2) \left [ z_{10}+z_{-10}+\alpha^
 \end{split}
 \end{equation}
 Thus, we will use (\ref{eq:offnode}) instead of (A-7) when updating nodes with nearby data constraints.
+
+\section{How about pixel registration?}
+
+\PDFfig[h]{pixelnodes}{A {\bf-R}0/8/0/8 region with unit spacing and pixel registration implies we
+want to estimate the solution at the shifted nodes instead of the grid nodes, and then discard the nodes outside the domain.}{5in}
+The surface algorithm is strictly built for grid-line registered grids.  However, it is not too hard to
+accommodate user requests for a pixel grid: We simply (temporarily and internally) shift the specified domain
+by half a grid spacing to the east and north, do the gridding, then change the registration setting to pixel
+and increase the north and east pads by 1 before writing.  This results in the desired image. The node situation
+is described in Figure~\ref{fig:pixelnodes}. 
 
 \end{document}

@@ -185,7 +185,7 @@ EOF
 #-------------------------------------------------
 # Post-processing
 gmt psxy -R -J -O -T >> $FIG.ps
-rm -f t.grd rot.grd back.ps
 gmt psconvert $FIG.ps -Tf -P -A
+rm -f t.grd rot.grd back.ps $FIG.ps
 open $FIG.pdf
 
