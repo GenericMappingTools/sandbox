@@ -1,0 +1,90 @@
+%	$Id$
+% Internal documentation for Grid pad boundary conditions
+% Paul Wessel, May 24, 2023.
+\documentclass[12pt,letterpaper,margin=0.5in]{article}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{breqn}
+\usepackage[margin=1in]{geometry}
+\newcommand{\PDFfig}[4][tbp]{\begin{figure}[#1] \centering \epsfig{figure=#2,width=#4} \caption{{\small #3}} \label{fig:#2} \end{figure}}
+\pagenumbering{arabic}
+
+\begin{document}
+\section{SETTING PAD NODES WHEN READING SUBSETS}
+
+The problem we discuss is the mixed data and natural BC on just one side of a grid.  The grid
+has dimensions $n_y \times n_x$.
+
+\subsection{Setting the BCs in the west pad}
+\label{sec:west}
+\PDFfig[h]{nodes}{Memory layout (nodes and pad) when reading a subset from a grid file.  The desired region (fat lines)
+has data nodes ($d_{i,j}$) and because the original grid file extends further in the south, east, and north
+directions the pad also has actual data nodes serving as boundary conditions. All nodes left of the vertical thick
+line have no data and are initially zeros.  BC nodes to be discussed in the text are colored. Gray box indicates the 
+4x4 set of nodes involved in the BCR convolution to estimate a value at the plus symbol.}{4.5in}
+
+\subsection{Setting the BCs in the west pad one step out}
+Per the {\bf surface} notes, we know we have two boundary conditions we can satisfy on the west in the case of
+natural conditions. The first is the requirement that the Laplacian curvature at the west edge is zero, i.e.,
+\begin{equation}
+	\nabla^2 z = 0.
+\end{equation}
+This results in a finite difference expression that relates inside, edge and outside nodes, which we can then
+rearrange to solve for the outside ($z_{-1,0}$) node.  Here, subscripts $_{0,0}$ indicates a particular $d$ point on the
+western edge, and the other subscripts are relative to this anchor point:
+\begin{equation}
+	z_{-1,0} = 4 d_{0,0} - d_{1,0} - d_{0,1} - d_{0,-1}.
+	\label{eq:BC1}
+\end{equation}
+As this equation is applied for all rows $j = 0$ up to and including $j = n_y - 1$, we fill that column with values thus:
+\begin{equation}
+	z_{-1,j} = 4 d_{0,j} - d_{1,j} - d_{0,j+1} - d_{0,j-1}.
+	\label{eq:BC1j}
+\end{equation}
+
+\subsection{Setting the BCs in the corners}
+At the corner of the grid we require 
+\begin{equation}
+	\frac{\partial^2}{\partial x \partial y} z = 0.
+\end{equation}
+This yields the finite difference expression for the NW green node:
+\begin{equation}
+	z_{-1,-1} = d_{1,-1} - d_{1,1} - z_{-1,1}
+	\label{eq:BCc}
+\end{equation}
+The corner nodes must be set via (\ref{eq:BCc}) before we can move to the $z_{-2,j}$ nodes.
+
+\subsection{Setting the BCs in the west pad two steps out}
+The third boundary condition says the side-normal (here positive $x$-direction) derivative of the Laplacian should also be
+zero, i.e.,
+\begin{equation}
+	\frac{\partial}{\partial x} \left (\nabla^2 z \right ) = 0.
+\end{equation}
+This expression can also be written as finite differences and we may solve for the outside node:
+\begin{equation}
+	z_{-2,0} = d_{1,0} + 5(z_{-1,0} - d_{0,0}) + (d_{0,-1} - z_{-1,-1}) + (d_{0,1} - z_{-1,1})
+	\label{eq:BC2}
+\end{equation}
+This equation is then applied to all the rows with BC2 labels we fill that column with values.
+Obviously, (\ref{eq:BC1}) needs to be applied for all the $z_{-1,j}$ for all rows $j = 0$ up to
+and including $j = n_y - 1$ since (\ref{eq:BC2}) references nodes that must be set first, i.e.,
+\begin{equation}
+	z_{-2,j} = d_{1,j} + 5(z_{-1,j} - d_{0,j}) + (d_{0,j-1} - z_{-1,j-1}) + (d_{0,j+1} - z_{-1,j+1}).
+	\label{eq:BC2}
+\end{equation}
+
+\subsection{Setting the red- and yellow-colored nodes}
+The red and yellow nodes are never listed in any of our BCs (except when filling data) so to prevent them
+from being included in the BCR convolution we must set
+\begin{equation}
+	z_{-2,2} = z_{-1,2} = z_{-2,-1} = \mbox{NaN}.
+	\label{eq:BC2}
+\end{equation}
+
+\subsection{The order of BCs}
+In conclusion, we first apply (\ref{eq:BC1j}), then the corner (\ref{eq:BCc}), and finally (\ref{eq:BC2}).
+Applying the corner BC first (GMT 6.4.0 and earlier) means some nodes are still zero for this scenario.
+
+\end{document}.
